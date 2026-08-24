@@ -1158,7 +1158,10 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 
 /* --- start-project form --- */
 .cform {
-  margin-top: 40px; max-width: 760px;
+  /* no width cap: every other section pairs a left header with a FULL-WIDTH
+     content block (services/coverage/process grids, the console) — the 760px
+     cap made this the one section with a dead right half */
+  margin-top: 40px;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
   padding: 30px 28px; display: flex; flex-direction: column; gap: 18px;
 }
