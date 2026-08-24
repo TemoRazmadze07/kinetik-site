@@ -110,7 +110,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   }
   .nav-links a:not(.btn) { padding: 13px 6px; font-size: 16px; border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); }
   .nav-links a:not(.btn)::after { display: none; }
-  .nav-links .btn-small { align-self: flex-start; margin-top: 14px; padding: 12px 20px; font-size: 14px; }
+  .nav-links .btn-small { margin-top: 14px; padding: 12px 20px; font-size: 14px; justify-content: center; text-align: center; }
 }
 
 /* ---------- buttons ---------- */
@@ -132,11 +132,13 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 /* phones: primary CTAs fill the container and stack — bigger, easier tap targets
    (covers hero, contact, case-page CTAs via .hero-cta, and the reel video button) */
 @media (max-width: 560px) {
-  /* buttons keep their intrinsic width on phones — no full-bleed pills.
-     Hero is a centred composition; contact is left-aligned, so each gets
-     its own axis alignment. */
-  .hero-cta { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .khero .hero-cta { align-items: center; }
+  /* full-bleed pills on phones: the portfolio's own treatment, and the
+     biggest tap targets a stacked column can offer */
+  .hero-cta { flex-direction: column; align-items: stretch; gap: 12px; }
+  .hero-cta .btn { width: 100%; justify-content: center; }
+  /* the hero column is centred, so the CTA box would otherwise shrink to its
+     content and the "full width" pills would only fill that shrunken box */
+  .khero .hero-cta { width: 100%; }
   .reel-cta .reel-note { text-align: center; }
 }
 
@@ -1119,9 +1121,11 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .khero-mq-track li {
   white-space: nowrap; padding-left: .38em;
   /* portfolio hero metrics; 1.35 keeps descenders clear of overflow:hidden */
-  font-size: clamp(64px, 12.5vw, 136px); font-weight: 500; line-height: 1.35;
+  font-size: clamp(76px, 15vw, 164px); font-weight: 500; line-height: 1.35;
   letter-spacing: -0.045em;
-  color: color-mix(in srgb, var(--ink) 6%, transparent);
+  /* 4.8% = 20% less ink than the 6% it started at: the bigger the type, the
+     more total area it covers, so it has to sit fainter to stay a ghost */
+  color: color-mix(in srgb, var(--ink) 4.8%, transparent);
 }
 
 /* --- services --- */
@@ -1183,6 +1187,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .cform-note a:hover { text-decoration: underline; }@media (max-width: 640px) {
   .cform { padding: 22px 18px; }
   .cform-row { grid-template-columns: 1fr; }
+  .cform-actions .btn { width: 100%; justify-content: center; }
 }
 
 /* shimmer on the hero accent word — motion, literally */
@@ -1227,9 +1232,14 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   width: 46%; height: auto; overflow: visible;
   transform: translate(-50%, -50%) rotate(-3deg);
 }
+.khero-hello .hh-text,
+.khero-hello .hh-dot {
+  /* ink on the CRT, not on the page — stays dark on any page theme.
+     The period is part of the handwriting, so one declaration owns both. */
+  fill: #2f3a4d;
+}
 .khero-hello .hh-text {
   font-family: "Dancing Script", cursive; font-weight: 700; font-size: 46px;
-  fill: #2f3a4d; /* ink on the CRT, not on the page — stays dark */
 }
 .khero-hello .hh-mask {
   fill: none; stroke: #fff; stroke-width: 10;
