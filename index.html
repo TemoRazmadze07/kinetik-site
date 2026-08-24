@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <script>
 // Must run before the browser restores scroll: always start at the top.
@@ -62,12 +62,15 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
             </ul>
           </div>
         </div>
-        <!-- The hero object IS the portfolio's handwritten hello (Temo: the brand
-             wordmark lives in the nav; "brand itself is not so important" here).
-             Same Dancing Script + stroke-mask trick at the portfolio's exact
-             timings — the white mask stroke traces the pen route and reveals
-             the text beneath, writing in the real font. -->
-        <svg class="khero-hello" viewBox="22 0 96 58" width="96" height="58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- The hero object is the portfolio's FULL mac moment: the Macintosh
+             mockup (assets/mac.svg, same file) with the handwritten hello writing
+             itself on the CRT — Dancing Script + stroke-mask, portfolio's exact
+             geometry (hello at 50%/30.9% of the mac art) and timings (mac rises
+             at .45s, pen draws 1.6s @1.15s, dot @2.85s). Brand wordmark stays in
+             the nav only. -->
+        <div class="khero-mac" aria-hidden="true">
+          <img class="khero-macsvg" src="assets/mac.svg" alt="" width="706" height="978">
+          <svg class="khero-hello" viewBox="22 0 96 58" width="96" height="58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <mask id="helloMask" maskUnits="userSpaceOnUse" x="0" y="0" width="150" height="70">
               <path class="hh-mask" pathLength="1" d="M28 44 C30 36 33 24 36 16 C38 10 41 7 43 9 C44 11 42 18 40 24 C38 33 37 41 37 46 C37 48 38 49 39 48 C41 46 42 40 44 35 C45 31 47 30 48 33 C49 36 48 42 48 46 C49 50 51 49 53 46 C55 42 58 36 60 33 C61 31 62 32 61 34 C59 38 56 40 54 41 C52 42 52 45 54 46 C56 48 60 47 63 44 C66 44 68 36 70 26 C72 15 75 7 76 6 C77 6 77 11 76 17 C74 27 71 38 70 44 C70 48 70 50 72 49 C74 46 77 38 80 28 C82 16 86 7 87 6 C88 6 88 11 87 17 C85 27 82 38 81 44 C81 48 81 50 83 49 C85 48 88 46 90 42 C92 36 95 32 98 31 C95 30 92 33 91 37 C90 41 92 45 95 45 C99 45 102 42 102 38 C102 34 100 31 98 31 C100 32 103 36 104 40 C105 43 106 46 106 47"/>
@@ -75,7 +78,8 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
           </defs>
           <text class="hh-text" x="66" y="48" text-anchor="middle" mask="url(#helloMask)">hello</text>
           <circle class="hh-dot" cx="112" cy="45" r="2.6" fill="#36f5a2"/>
-        </svg>
+          </svg>
+        </div>
       </div>
       <h1 class="khero-title reveal d1">Digital products that <span class="accent">move</span> people.</h1>
       <p class="khero-sub reveal d2">We design and build websites, platforms and digital services that are clear, accessible and built to perform.</p>

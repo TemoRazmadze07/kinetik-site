@@ -1900,15 +1900,29 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 /* --- handwritten hello: the portfolio's signature, over the wordmark.
        Reuses the portfolio's stroke-mask recipe (see .hero2-hello) with
        timings that wait for the wordmark sweep (.95s at 1.05s) to land. --- */
+.khero-mac {
+  /* the hero object: the portfolio's Macintosh, hello writing on its CRT.
+     210px is the portfolio's own desktop size; h2mac is its entrance. */
+  position: relative; z-index: 1; width: 210px;
+  opacity: 0; animation: h2mac .8s cubic-bezier(.2,.7,.2,1) .45s forwards;
+}
+.khero-macsvg { display: block; width: 100%; height: auto; }
+/* ground shadow — deeper than the portfolio's: it has to read on a dark floor */
+.khero-mac::after {
+  content: ""; position: absolute; z-index: -1;
+  left: 12%; right: 12%; bottom: -8px; height: 20px;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .6), transparent 72%);
+  filter: blur(5px);
+}
 .khero-hello {
-  /* the hero object itself — in flow, over the ghost band */
-  position: relative; z-index: 1; display: block;
-  width: clamp(190px, 24vw, 270px); height: auto; overflow: visible;
-  transform: rotate(-5deg);
+  /* portfolio geometry: centred on the CRT of the full mac.svg art */
+  position: absolute; left: 50%; top: 30.9%;
+  width: 46%; height: auto; overflow: visible;
+  transform: translate(-50%, -50%) rotate(-3deg);
 }
 .khero-hello .hh-text {
   font-family: "Dancing Script", cursive; font-weight: 700; font-size: 46px;
-  fill: var(--ink);
+  fill: #2f3a4d; /* ink on the CRT, not on the page — stays dark */
 }
 .khero-hello .hh-mask {
   fill: none; stroke: #fff; stroke-width: 10;
@@ -1936,7 +1950,12 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .footer-founder:hover { text-decoration: underline; }
 
 /* --- motion off switch for the new pieces --- */
+@media (max-width: 560px) {
+  .khero-mac { width: 180px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .khero-mac { opacity: 1; animation: none; }
   .khero-marquee { opacity: 1; animation: none; }
   .khero-mq-track { animation: none; }
   .khero-hello .hh-mask { animation: none; stroke-dashoffset: 0; }
