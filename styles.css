@@ -2,6 +2,24 @@
    Temo Razmadze — portfolio
    Design tokens first: tweak these, the site follows.
    ============================================================ */
+/* ---------- Georgian face ----------
+   Self-hosted rather than pulled from Google Fonts on purpose. The CDN's
+   Noto Sans Georgian also declares math + symbols subsets, and BOTH cover
+   U+2192 — which Plus Jakarta does not have. Putting the CDN family in the
+   stack therefore hands every "→" on the site (buttons, .also bullets, the
+   nav CTA) to Noto and pulls an extra subset down on pages with no Georgian
+   on them at all. This file is the georgian subset only: variable wght
+   100–900, 41kB, 174 glyphs (Mkhedruli, Mtavruli, Nuskhuri), no arrows.
+   OFL 1.1 — assets/fonts/OFL.txt travels with it. */
+@font-face {
+  font-family: "Noto Sans Georgian";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/noto-sans-georgian-ka-v48.woff2") format("woff2");
+  unicode-range: U+0589, U+10A0-10FF, U+1C90-1CBA, U+1CBD-1CBF, U+205A, U+2D00-2D2F, U+2E31;
+}
+
 :root {
   color-scheme: dark;      /* native form controls, scrollbars, UA bits go dark */
   --ink: #f5f6f7;          /* near-white — headings on the dark ground */
@@ -27,11 +45,16 @@
   --tint-sand: var(--band);
   --tint-rose: var(--band);
 
-  --r-lg: 28px;
+  /* 24px, not 28 (Temo, 2026-08-25). Paired with corner-shape: squircle on the
+     card surfaces — continuous corners read slightly tighter than a circular arc
+     at the same number, so 24 squircle sits a fair way in from the old 28 round. */
+  --r-lg: 24px;
   --r-md: 18px;
   --r-pill: 999px;
 
-  --font: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  /* Georgian falls through to Noto Sans Georgian per character, so Latin brand
+     words (KINETIK, Figma, WCAG) keep Plus Jakarta inside a Georgian sentence. */
+  --font: "Plus Jakarta Sans", "Noto Sans Georgian", system-ui, -apple-system, sans-serif;
   --wrap: 1160px;
 }
 
@@ -189,7 +212,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 
 .card {
   display: flex; flex-direction: column; justify-content: space-between;
-  border-radius: var(--r-lg); padding: 34px 34px 28px; text-decoration: none;
+  border-radius: var(--r-lg); corner-shape: squircle; padding: 34px 34px 28px; text-decoration: none;
   color: var(--body);
   position: relative; overflow: hidden;
   transition: transform .5s cubic-bezier(.2,.65,.25,1), box-shadow .5s cubic-bezier(.2,.65,.25,1);
@@ -291,7 +314,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   --pcard-pad: 26px;
   width: 350px; height: 500px; flex: none; margin-right: 24px;
   position: relative; display: flex; flex-direction: column; overflow: hidden;
-  border-radius: var(--r-lg); text-decoration: none; color: rgba(255,255,255,.86);
+  border-radius: var(--r-lg); corner-shape: squircle; text-decoration: none; color: rgba(255,255,255,.86);
   border: 1px solid rgba(255,255,255,.07);
   transition: transform .5s cubic-bezier(.2,.65,.25,1), box-shadow .5s cubic-bezier(.2,.65,.25,1);
 }
@@ -418,7 +441,10 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 
 .t-card {
   width: 384px; flex: none; display: flex; flex-direction: column; gap: 14px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px 26px 22px;
+  /* was a hardcoded 20px — the only card not on --r-lg, which read as a
+     different family beside the project and service cards */
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); corner-shape: squircle; padding: 24px 26px 22px;
   box-shadow: 0 10px 30px -18px rgba(14,27,44,.16);
   transition: transform .45s cubic-bezier(.2,.65,.25,1), box-shadow .45s cubic-bezier(.2,.65,.25,1);
 }
@@ -1183,7 +1209,8 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .svc-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-top: 44px; }
 .svc {
   grid-column: span 2; display: flex; flex-direction: column; gap: 10px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); corner-shape: squircle;
   padding: 30px 28px 26px;
   transition: transform .45s cubic-bezier(.2,.65,.25,1), border-color .45s ease;
 }
@@ -1206,7 +1233,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 /* --- coverage --- */
 .coverage { padding: 88px 0 56px; }
 .cov-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
-.cov { background: var(--band); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px 26px; }
+.cov { background: var(--band); border: 1px solid var(--line); border-radius: var(--r-lg); corner-shape: squircle; padding: 28px 26px; }
 .cov-name { font-weight: 800; color: var(--ink); font-size: 19px; letter-spacing: -0.01em; }
 .cov-desc { margin-top: 8px; font-size: 15px; line-height: 1.55; }@media (max-width: 860px) { .cov-grid { grid-template-columns: 1fr; } }
 
@@ -1216,15 +1243,29 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
      content block (services/coverage/process grids, the console) — the 760px
      cap made this the one section with a dead right half */
   margin-top: 40px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); corner-shape: squircle;
   padding: 30px 28px; display: flex; flex-direction: column; gap: 18px;
 }
 .cform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .cfield { display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; font-weight: 700; color: var(--ink); letter-spacing: .02em; }
+/* Corners: 12px on a 48px field sat oddly against the fully-round buttons and
+   chips — and the form is the one component where a pill lives INSIDE the same
+   card as an input, so the mismatch showed there first. --r-md (18px) halves the
+   perceived gap without turning a field into a pill (that would be 24px here).
+
+   corner-shape: squircle is the iOS-style continuous corner: the curve starts
+   earlier and flattens into the straight edge instead of meeting it at a tangent.
+   It also reads slightly TIGHTER than a circular arc at the same number, which is
+   why 18px is safe to take here — 18 squircle lands near 15-16 round in feel.
+   Unsupported browsers ignore the line and keep the plain 18px arc.
+   NEVER put this on a pill: at --r-pill the radius clamps to half the height and
+   squircle turns the stadium into a boxy superellipse. Pills stay `round`. */
 .cfield input, .cfield select, .cfield textarea {
   font: inherit; font-weight: 500; color: var(--ink);
   background: color-mix(in srgb, var(--bg) 55%, var(--surface));
-  border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: var(--r-md); corner-shape: squircle;
+  padding: 12px 14px;
   outline: none; transition: border-color .25s ease, box-shadow .25s ease;
 }
 .cfield input::placeholder, .cfield textarea::placeholder { color: var(--mute); opacity: .75; font-weight: 400; }
@@ -1264,7 +1305,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   position: relative; width: 100%; text-align: left;
   font: inherit; font-weight: 500; color: var(--ink);
   background-color: color-mix(in srgb, var(--bg) 55%, var(--surface));
-  border: 1px solid var(--line); border-radius: 12px;
+  border: 1px solid var(--line); border-radius: var(--r-md); corner-shape: squircle;
   padding: 12px 40px 12px 14px; cursor: pointer; outline: none;
   transition: border-color .25s ease, box-shadow .25s ease;
 }
@@ -1281,7 +1322,8 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .ksel-list {
   position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 6px);
   margin: 0; padding: 6px; list-style: none;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-md); corner-shape: squircle;
   box-shadow: 0 18px 44px rgba(0, 0, 0, .55);
   /* 320 clears all six options (6 x 43 + 12 padding = 270) so the list doesn't
      scroll by a few px; it still caps if options are ever added. */
@@ -1290,7 +1332,9 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .ksel-opt {
   /* 11px vertical puts the row at 45px — over the 44px comfortable touch target,
      not just the 24px WCAG 2.5.8 floor */
-  padding: 11px 12px; border-radius: 8px; cursor: pointer;
+  /* 12px = the panel's 18px minus its 6px padding, so the row's corner sits
+     concentric inside the panel's rather than fighting it */
+  padding: 11px 12px; border-radius: 12px; corner-shape: squircle; cursor: pointer;
   font-size: 14.5px; font-weight: 500; color: var(--body);
 }
 .ksel-opt.is-active { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--ink); }
@@ -1408,4 +1452,46 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   .khero-hello .hh-mask { animation: none; stroke-dashoffset: 0; }
   .khero-hello .hh-dot { animation: none; opacity: 1; }
   .khero-title .accent { animation: none; }
+}
+
+
+/* ---------- Georgian (KA) ----------
+   Decided 2026-08-25 after a rendered round against FiraGO: Noto Sans Georgian.
+   Measured at 100px, its Mkhedruli body height is 53.6 against Plus Jakarta's
+   53.6 x-height — an exact match, which is why there is no size-adjust and no
+   per-language font-size below. One variable file, 200..800, ~41kB, and the
+   georgian subset only downloads on pages that actually contain Georgian.
+   Nothing in this block fires until the document carries lang="ka". */
+
+/* Tracking. -0.02/-0.03em is a Latin display trick — Mkhedruli bowls are round
+   and close up under it. Zero everywhere it was negative. */
+:lang(ka) h1, :lang(ka) h2, :lang(ka) h3,
+:lang(ka) .svc-name, :lang(ka) .stat-num, :lang(ka) .cov-name,
+:lang(ka) .nav-name, :lang(ka) .card h3,
+:lang(ka) .marquee-track span { letter-spacing: 0; }
+
+/* Leading. Georgian descenders measure 25 deep against Plus Jakarta's 20, so
+   the 1.08 headings clip ჯ / ღ / ყ into the line above. */
+:lang(ka) h1, :lang(ka) h2, :lang(ka) h3 { line-height: 1.22; }
+
+/* Set width. Measured EN -> KA growth on the real strings: +28% on short
+   labels, +49% on the CTA, +96% on the whole H1 line. The hero needs its own
+   clamp or it wraps to three lines and eats the mac. */
+:lang(ka) .khero-title {
+  font-size: clamp(26px, 3.6vw, 42px); line-height: 1.2; letter-spacing: 0;
+}
+/* same reason, plus 1.35 was tuned for Latin descenders and overflow:hidden */
+:lang(ka) .khero-mq-track li {
+  font-size: clamp(58px, 11vw, 124px); line-height: 1.5; letter-spacing: 0;
+}
+
+/* No uppercase. Georgian is unicameral, and Chromium does not apply the
+   Mkhedruli -> Mtavruli case map anyway (measured: the transformed string
+   renders at exactly the same width), so text-transform is a silent no-op that
+   leaves the label reading as ordinary tracked text. Carry the label with
+   tracking and colour instead. Real Mtavruli titling, if it is ever wanted, is
+   typed as U+1C90+ characters in the content — never switched on in CSS. */
+:lang(ka) .kicker, :lang(ka) .khero-kicker, :lang(ka) .svc-type,
+:lang(ka) .pcard-cat, :lang(ka) .footer-h {
+  text-transform: none; letter-spacing: .04em;
 }
