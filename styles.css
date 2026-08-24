@@ -7,6 +7,10 @@
   --ink: #f5f6f7;          /* near-white — headings on the dark ground */
   --body: #aeb6c4;         /* body text */
   --mute: #7d8797;         /* secondary text */
+  --err: #ff8a8a;          /* form errors — 7.6:1 on --surface. Never the ONLY
+                              signal: green/red is the hardest pair for red-green
+                              colourblindness and this brand's accent is green, so
+                              every error also carries an icon and a text message. */
   --bg: #0d0f14;           /* KINETIK dark ground (brand foundation) */
   --surface: #15181e;
   --accent: #36f5a2;       /* KINETIK green — brand, the "one word" color */
@@ -152,7 +156,6 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 
 /* ---------- trust strip ---------- */
 .trust { padding: 18px 0 8px; border-top: 1px solid var(--line); }
-.trust-label { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); margin-bottom: 4px; }
 .marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .marquee-track { display: inline-flex; align-items: center; padding: 18px 0 26px; white-space: nowrap; animation: marquee 30s linear infinite; }
 /* margin (not gap) so every item — including the last of each set — carries its
@@ -168,10 +171,14 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .lg-tbc { width: 92px; height: 25px; }
 .lg-gpi { width: 82px; height: 24px; }
 .lg-fido { width: 74px; height: 25px; }
-/* ADNOC is the Latin wordmark only. ADNOC's official lockups all carry the Arabic أدنوك
-   and set the falcon panel on the RIGHT (Arabic is RTL); the solid panel also cannot be
-   tinted flat grey here without reading as a filled slab. Sized to match ROGERS/GPI caps. */
-.lg-adnoc { width: 81px; height: 17px; }
+/* 3.49:1 — sized on the ring caps so it sits with ROGERS/GPI, not on raw width */
+.lg-icr { width: 77px; height: 22px; }
+/* the one near-square mark in the row (0.97:1). Sized by HEIGHT, not cap-height:
+   at the wordmarks' 22px it would be a 21px speck beside 68-128px logos.
+   30px is the compromise — THIS IS THE KNOB if it reads too big or small. */
+.lg-itstep { width: 29px; height: 30px; }
+/* 3.72:1, ink fills the viewBox — sizes like gpi */
+.lg-ecosign { width: 82px; height: 22px; }
 @keyframes marquee { to { transform: translateX(-25%); } }
 
 /* ---------- work ---------- */
@@ -232,9 +239,25 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .contact-sub { max-width: 54ch; margin-bottom: 32px; }
 
 /* ---------- footer ---------- */
-.footer { border-top: 1px solid var(--line); padding: 26px 0; }
-.footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: var(--mute); }
-.footer-note { font-weight: 600; }
+.footer { border-top: 1px solid var(--line); padding: 60px 0 26px; }
+.footer-grid { display: grid; grid-template-columns: 2.2fr 1fr 1fr 1.3fr; gap: 40px 32px; }
+.footer-logo { width: 116px; height: auto; display: block; opacity: .92; }
+.footer-blurb { margin-top: 18px; font-size: 14px; line-height: 1.6; color: var(--body); max-width: 46ch; }
+.footer-geo { margin-top: 12px; font-size: 13px; color: var(--mute); }
+.footer-h { font-size: 12.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-bottom: 15px; }
+.footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.footer-col a { font-size: 14px; color: var(--mute); text-decoration: none; transition: color .2s ease; }
+/* only the real links light up — the social placeholders carry no href yet */
+.footer-col a[href]:hover { color: var(--accent); }
+.footer-social { margin-top: 18px; }
+.footer-social a { opacity: .5; cursor: default; }
+.footer-bottom {
+  display: flex; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap;
+  margin-top: 46px; padding-top: 22px; border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--mute);
+}
+@media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .footer { padding-top: 48px; } .footer-grid { grid-template-columns: 1fr; gap: 30px; } }
 
 /* ---------- section kicker (accent bar + label) ---------- */
 .kicker {
@@ -471,13 +494,21 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .t-more { justify-content: center; gap: 12px; background: var(--tint-blue); border: none; text-decoration: none; }
 .t-more .card-cta { color: var(--accent-ink); }
 
-/* Touch devices: turn the content marquees (testimonials + projects) into native
+/* Mobile: turn the content marquees (testimonials + projects) into native
    swipeable carousels. The CSS transform animation can't be swiped and its :hover
-   pause sticks on a tap (freezing it). On coarse pointers we drop the animation and
-   make the track natively scrollable; script.js drives a gentle auto-advance that
-   pauses while a finger is down and eases back in after release. (The decorative
-   logo strip keeps its simple CSS auto-scroll — it's not meant to be swiped.) */
-@media (hover: none) and (pointer: coarse) {
+   pause sticks on a tap (freezing it), so here we drop the animation and make the
+   track natively scrollable; script.js drives a gentle auto-advance that pauses
+   while a finger is down and eases back in after release. (The decorative logo
+   strip keeps its simple CSS auto-scroll — it's not meant to be swiped.)
+
+   The condition is TOUCH **or** MOBILE-WIDTH, not touch alone. Gating on pointer
+   type only (`(hover: none) and (pointer: coarse)`, which is what this was) left
+   every narrow-but-mouse viewport — a resized desktop window, a preview pane, a
+   touch laptop — on the desktop marquee: cards crawling past inside `overflow:
+   hidden` with no way to swipe them. 760px is the site's mobile breakpoint, the
+   same width at which the nav collapses to the burger. Keep this selector list in
+   sync with the matchMedia string in script.js. */
+@media (hover: none) and (pointer: coarse), (max-width: 760px) {
   .t-row, .work-track {
     width: auto; overflow-x: auto; overflow-y: hidden; animation: none; transform: none;
     -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
@@ -516,8 +547,8 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   position: absolute; inset: 0; pointer-events: none;
   background-image: radial-gradient(rgba(98,247,182,.06) 1px, transparent 1px);
   background-size: 13px 13px;
-  -webkit-mask-image: radial-gradient(150% 120% at 50% 38%, #000 55%, transparent 100%);
-  mask-image: radial-gradient(150% 120% at 50% 38%, #000 55%, transparent 100%);
+  -webkit-mask-image: radial-gradient(140% 104% at 50% 44%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(140% 104% at 50% 44%, #000 40%, transparent 100%);
 }
 
 .ai-title { color: #fff; margin-bottom: 14px; }
@@ -790,13 +821,28 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   position: relative; overflow: hidden;
   /* the console is the last element and its own shadow reads as breathing room,
      so the floor is shallower than the ceiling */
-  background: #0c0d12; padding: 104px 0 84px;
+  /* Section joins used to switch on hard: band colour, glow and dot grid all
+     began exactly at the boundary line. Each edge now RESOLVES TO THE NEIGHBOUR'S
+     COLOUR — --bg above (services), --band below (the accessibility band) — so
+     the seam has nothing to see. Alpha-0 stops are spelled as rgba of the SAME
+     colour, never `transparent`: `transparent` is transparent-BLACK and gradients
+     interpolate through it, which greys the middle of the fade. */
+  background:
+    linear-gradient(to bottom, var(--bg), rgba(13, 15, 20, 0) 150px),
+    linear-gradient(to top, var(--band), rgba(18, 21, 27, 0) 150px),
+    #0c0d12;
+  padding: 104px 0 84px;
 }
 .ai::before {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background:
     radial-gradient(620px 360px at 14% 4%, rgba(66,246,168,.13), transparent 70%),
     radial-gradient(680px 400px at 88% 96%, rgba(12,234,138,.10), transparent 72%);
+  /* the glows sit at 4% / 96% — right on the edges — and this layer paints ABOVE
+     the band's own fade, so without a mask the green survived the seam and gave
+     the boundary its hard line back */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 120px, #000 calc(100% - 110px), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 120px, #000 calc(100% - 110px), transparent);
 }
 .ai .wrap { position: relative; }
 
@@ -1129,7 +1175,11 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 }
 
 /* --- services --- */
-.services { padding: 88px 0 56px; }
+/* 88 bottom, not the sections' usual 56: services is the only one that ends
+   against the process band, whose FILLED background starts at the padding
+   edge — 56px reads tight there, where an open section gets the next
+   section's top padding as extra air. */
+.services { padding: 88px 0; }
 .svc-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-top: 44px; }
 .svc {
   grid-column: span 2; display: flex; flex-direction: column; gap: 10px;
@@ -1144,7 +1194,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .svc-name::after { content: ""; display: block; width: 34px; height: 4px; border-radius: 2px; background: var(--accent); margin-top: 10px; }
 .svc-desc { font-size: 15.5px; line-height: 1.55; }
 .svc-chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin-top: auto; padding-top: 10px; }
-.svc-chips li { font-size: 12.5px; font-weight: 600; color: var(--mute); border: 1px solid var(--line); padding: 5px 11px; border-radius: var(--r-pill); }@media (max-width: 980px) { .svc, .svc-wide { grid-column: span 3; } }@media (max-width: 640px) { .svc, .svc-wide { grid-column: span 6; } .services { padding-top: 72px; } }
+.svc-chips li { font-size: 12.5px; font-weight: 600; color: var(--mute); border: 1px solid var(--line); padding: 5px 11px; border-radius: var(--r-pill); }@media (max-width: 980px) { .svc, .svc-wide { grid-column: span 3; } }@media (max-width: 640px) { .svc, .svc-wide { grid-column: span 6; } .services { padding: 72px 0; } }
 
 /* --- process steps (inside the dark band, above the console) --- */
 .prc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 52px; }
@@ -1180,6 +1230,91 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .cfield input::placeholder, .cfield textarea::placeholder { color: var(--mute); opacity: .75; font-weight: 400; }
 .cfield input:focus, .cfield select:focus, .cfield textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(54,245,162,.18); }
 .cfield textarea { resize: vertical; min-height: 104px; }
+.cfield-label { display: block; }
+
+/* --- form errors ---
+   script.js validates on submit, injects .cfield-error under the offending field
+   and scrolls the first one into view. scroll-margin-top clears the sticky nav
+   (73px) plus air, so the field never lands under the bar. */
+.cfield { scroll-margin-top: 96px; }
+.cfield-error {
+  display: flex; align-items: flex-start; gap: 7px;
+  margin: -2px 0 0; font-size: 12.5px; font-weight: 600; line-height: 1.45;
+  color: var(--err); letter-spacing: .01em;
+}
+.cfield-error svg { flex: none; width: 14px; height: 14px; margin-top: 1px; }
+.cfield input[aria-invalid="true"],
+.cfield textarea[aria-invalid="true"] {
+  border-color: var(--err);
+  background: color-mix(in srgb, var(--err) 7%, color-mix(in srgb, var(--bg) 55%, var(--surface)));
+}
+.cfield input[aria-invalid="true"]:focus,
+.cfield textarea[aria-invalid="true"]:focus {
+  border-color: var(--err); box-shadow: 0 0 0 3px rgba(255,138,138,.2);
+}
+
+/* --- custom select (script.js builds it; the native one below is the fallback) ---
+   The chevron here is a CSS-drawn ::after, not the data URI the native control
+   needs — a <select> is a replaced element and can't carry a pseudo-element. The
+   upside: this one reads var(--mute), so it follows the tokens, and it can spin
+   180° on open. Keep both in sync if the arrow's look ever changes. */
+.ksel-native { display: none; }
+.ksel { position: relative; }
+.ksel-btn {
+  position: relative; width: 100%; text-align: left;
+  font: inherit; font-weight: 500; color: var(--ink);
+  background-color: color-mix(in srgb, var(--bg) 55%, var(--surface));
+  border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 40px 12px 14px; cursor: pointer; outline: none;
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.ksel-btn::after {
+  content: ""; position: absolute; right: 16px; top: 50%; width: 7px; height: 7px;
+  margin-top: -5px; border-right: 2px solid var(--mute); border-bottom: 2px solid var(--mute);
+  transform: rotate(45deg); transition: transform .2s ease, border-color .2s ease;
+}
+.ksel-btn:hover::after { border-color: var(--ink); }
+.ksel-btn:focus-visible, .ksel.is-open .ksel-btn {
+  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(54,245,162,.18);
+}
+.ksel.is-open .ksel-btn::after { transform: rotate(-135deg); margin-top: -2px; }
+.ksel-list {
+  position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 6px);
+  margin: 0; padding: 6px; list-style: none;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .55);
+  /* 320 clears all six options (6 x 43 + 12 padding = 270) so the list doesn't
+     scroll by a few px; it still caps if options are ever added. */
+  max-height: 320px; overflow-y: auto;
+}
+.ksel-opt {
+  /* 11px vertical puts the row at 45px — over the 44px comfortable touch target,
+     not just the 24px WCAG 2.5.8 floor */
+  padding: 11px 12px; border-radius: 8px; cursor: pointer;
+  font-size: 14.5px; font-weight: 500; color: var(--body);
+}
+.ksel-opt.is-active { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--ink); }
+/* the selected row is marked by a glyph AND weight, never by hue alone — green
+   is the site's accent and red/green is the worst pair for colour blindness */
+.ksel-opt[aria-selected="true"] { color: var(--ink); font-weight: 700; }
+.ksel-opt[aria-selected="true"]::after { content: "✓"; float: right; color: var(--accent); font-weight: 700; }
+@media (prefers-reduced-motion: reduce) {
+  .ksel-btn, .ksel-btn::after { transition: none; }
+}
+/* The select was the one field macOS still drew itself: appearance:auto keeps the
+   native control, which ignores our 12px/14px padding, lands 45px tall against the
+   inputs' 48px, and paints a system chevron that doesn't belong on the dark card.
+   Turn the native rendering off and draw the chevron ourselves — the arrow colour
+   is --mute inlined, since a data URI can't read a custom property. */
+.cfield select {
+  appearance: none; -webkit-appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%237d8797' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 8px;
+  cursor: pointer;
+}
 .cform-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .cform .btn { border: 0; cursor: pointer; font-family: inherit; }
 .cform-note { font-size: 13.5px; color: var(--mute); max-width: 380px; line-height: 1.5; }
@@ -1250,21 +1385,18 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 }
 .khero-hello .hh-dot { opacity: 0; animation: h2fade .15s ease-out 2.85s forwards; }
 
-/* --- trust strip founder line --- */
-.trust .trust-label { text-align: center; margin-bottom: 4px; }
-.trust-sub { text-align: center; color: var(--body); font-size: 15px; max-width: 660px; margin: 0 auto 8px; padding: 0 24px; }
-
 /* --- accessibility band --- */
-.a11y { background: var(--band); padding: 88px 0; }
+/* bottom edge resolves to --bg so the coverage section below joins invisibly;
+   the top needs nothing — .ai already fades ITS floor to --band. */
+.a11y {
+  background: linear-gradient(to top, var(--bg), rgba(13, 15, 20, 0) 130px), var(--band);
+  padding: 88px 0;
+}
 .a11y-link { margin-top: 20px; }
 .a11y-link a { color: var(--accent); font-weight: 700; font-size: 16.5px; text-decoration: none; }
 .a11y-link a:hover { text-decoration: underline; }
 .a11y-link .btn-arrow { display: inline-block; transition: transform .25s ease; }
 .a11y-link a:hover .btn-arrow { transform: translateX(4px); }
-
-/* --- footer founder credit --- */
-.footer-founder { color: var(--accent-ink); text-decoration: none; }
-.footer-founder:hover { text-decoration: underline; }
 
 /* --- motion off switch for the new pieces --- */
 @media (max-width: 560px) {
