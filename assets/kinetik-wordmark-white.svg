@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    width="999" height="95" viewBox="0 0 999 95"
+    fill="none" shape-rendering="geometricPrecision"
+    role="img" aria-labelledby="title desc">
+  <title id="title">KINETIK</title>
+  <desc id="desc">Corrected geometric KINETIK wordmark. Both K letters are mathematically identical.</desc>
+
+  <g fill="#FFFFFF">
+    <!-- K 1 — master geometry -->
+    <rect x="0" y="0" width="14" height="95"/>
+    <path d="M 83 0 L 40 34 L 29 44 L 29 46 L 85 94 L 105 94 L 47 45 L 104 0 Z"/>
+
+    <!-- I -->
+    <rect x="179" y="0" width="14" height="95"/>
+
+    <!-- N — traced from approved reference -->
+    <path d="M266 0 H280 L362 76 V0 H377 V95 H362 L280 18 V95 H266 Z"/>
+
+    <!-- E — three independent bars -->
+    <rect x="452" y="0" width="107" height="13"/>
+    <rect x="452" y="41" width="107" height="14"/>
+    <rect x="453" y="82" width="106" height="13"/>
+
+    <!-- T -->
+    <path d="M624 0 H742 V13 H692 L690 15 V95 H676 V15 L674 13 H624 Z"/>
+
+    <!-- I -->
+    <rect x="807" y="0" width="14" height="95"/>
+
+    <!-- K 2 — exact same master geometry translated 893 units -->
+    <rect x="893" y="0" width="14" height="95"/>
+    <path d="M 976 0 L 933 34 L 922 44 L 922 46 L 978 94 L 998 94 L 940 45 L 997 0 Z"/>
+  </g>
+</svg>

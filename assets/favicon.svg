@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- KINETIK K (master v3 geometry) on the brand dark ground -->
+  <rect width="64" height="64" rx="14" fill="#101218"/>
+  <g fill="#ffffff" transform="translate(13.5 15.5) scale(0.348)">
+    <rect x="0" y="0" width="14" height="95"/>
+    <path d="M 83 0 L 40 34 L 29 44 L 29 46 L 85 94 L 105 94 L 47 45 L 104 0 Z"/>
+  </g>
+</svg>

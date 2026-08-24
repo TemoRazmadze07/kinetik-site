@@ -1,0 +1,5 @@
+.DS_Store
+*.map
+.claude/
+# local helper scripts and asset backups — never part of the published site
+scratchpad/

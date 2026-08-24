@@ -1,0 +1,1925 @@
+/* ============================================================
+   Temo Razmadze — portfolio
+   Design tokens first: tweak these, the site follows.
+   ============================================================ */
+:root {
+  color-scheme: dark;      /* native form controls, scrollbars, UA bits go dark */
+  --ink: #f3f5f9;          /* near-white — headings on the dark ground */
+  --body: #aeb6c4;         /* body text */
+  --mute: #7d8797;         /* secondary text */
+  --bg: #101218;           /* KINETIK dark ground (brand foundation) */
+  --surface: #171a22;
+  --accent: #ff6a3d;       /* kinetic orange-red — the "one word" color */
+  --accent-ink: #ff8a5c;   /* lighter on dark: hover/pressed reads brighter */
+  --line: #262b36;
+
+  /* ONE band color site-wide. The four tint names survive as aliases so no
+     HTML changes (and tbc.html's inline SVG fill=var(--tint-sand) keeps
+     matching its band) — but they all resolve to the same light blue now:
+     alternating sand/green/rose bands read as noise when scrolling. */
+  --band: #151820;
+  --tint-blue: var(--band);
+  --tint-green: var(--band);
+  --tint-sand: var(--band);
+  --tint-rose: var(--band);
+
+  --r-lg: 28px;
+  --r-md: 18px;
+  --r-pill: 999px;
+
+  --font: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --wrap: 1160px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+/* NOTE: no CSS scroll-behavior:smooth here — Chrome animates scroll RESTORATION
+   with it too, which breaks reload-mid-page. Smooth anchors are handled in JS. */
+html { overscroll-behavior-y: none; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+.accent { color: var(--accent); }
+h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
+
+/* ---------- nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.nav-inner {
+  max-width: var(--wrap); margin: 0 auto; padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-name { font-weight: 800; color: var(--ink); text-decoration: none; font-size: 17px; letter-spacing: -0.01em; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; }
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:not(.btn) { position: relative; display: inline-flex; align-items: center; }
+/* hamburger toggle — hidden on desktop, shown ≤760px */
+.nav-toggle { display: none; width: 40px; height: 40px; margin-right: -8px; padding: 0; border: 0; background: transparent; color: var(--ink); cursor: pointer; align-items: center; justify-content: center; }
+.nav-burger, .nav-burger::before, .nav-burger::after { content: ""; display: block; width: 22px; height: 2px; border-radius: 2px; background: currentColor; transition: transform .25s ease, opacity .2s ease; }
+.nav-burger { position: relative; }
+.nav-burger::before { position: absolute; left: 0; top: -6.5px; }
+.nav-burger::after { position: absolute; left: 0; top: 6.5px; }
+.nav-toggle[aria-expanded="true"] .nav-burger { background: transparent; }
+.nav-toggle[aria-expanded="true"] .nav-burger::before { transform: translateY(6.5px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-burger::after { transform: translateY(-6.5px) rotate(-45deg); }
+/* scrollspy: script.js marks the section currently in view */
+.nav-links a:not(.btn)::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 2px;
+  border-radius: 1px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
+}
+.nav-links a.active { color: var(--accent); }
+.nav-links a.active::after { transform: scaleX(1); }
+/* the "Download CV" → "CV" swap is unused now (full label shows in the menu) */
+.cv-short { display: none; }
+/* ≤760px: links collapse behind the hamburger into a dropdown panel */
+@media (max-width: 760px) {
+  .nav-toggle { display: inline-flex; }
+  .nav-name { font-size: 15.5px; }
+  .nav-links {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 60;
+    flex-direction: column; align-items: stretch; gap: 2px;
+    padding: 8px 24px 16px;
+    background: color-mix(in srgb, var(--bg) 97%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 26px 40px -26px rgba(14,27,44,.4);
+    transform: translateY(-10px); opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
+  }
+  .nav.nav-open .nav-links {
+    transform: none; opacity: 1; visibility: visible; pointer-events: auto;
+    transition: opacity .2s ease, transform .2s ease, visibility 0s;
+  }
+  .nav-links a:not(.btn) { padding: 13px 6px; font-size: 16px; border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); }
+  .nav-links a:not(.btn)::after { display: none; }
+  .nav-links .btn-small { margin-top: 12px; padding: 12px 16px; font-size: 14px; justify-content: center; text-align: center; }
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--accent); color: #1c1109 !important;
+  font-weight: 700; font-size: 16px; text-decoration: none;
+  padding: 15px 28px; border-radius: var(--r-pill);
+  transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+  box-shadow: 0 1px 2px rgba(14,27,44,.12);
+}
+.btn:hover { background: #ff8155; transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(255,106,61,.4); }
+.btn .btn-arrow { transition: transform .25s ease; }
+.btn:hover .btn-arrow { transform: translateX(4px); }
+.btn-ghost { background: transparent; color: var(--ink) !important; border: 1.5px solid var(--ink); box-shadow: none; }
+.btn-ghost:hover { background: var(--ink); color: var(--bg) !important; }
+.btn-small { padding: 10px 20px; font-size: 14px; }
+
+/* phones: primary CTAs fill the container and stack — bigger, easier tap targets
+   (covers hero, contact, case-page CTAs via .hero-cta, and the reel video button) */
+@media (max-width: 560px) {
+  .hero-cta, .reel-cta { flex-direction: column; align-items: stretch; gap: 12px; }
+  .hero-cta .btn, .reel-cta .btn { width: 100%; justify-content: center; }
+  .reel-cta .reel-note { text-align: center; }
+}
+
+/* ---------- hero ---------- */
+.hero { padding: 96px 0 72px; }
+.eyebrow {
+  font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--mute); margin-bottom: 22px;
+}
+.hero h1 {
+  font-size: clamp(2.6rem, 6.4vw, 4.7rem);
+  line-height: 1.04; max-width: 15ch; margin-bottom: 26px;
+}
+.hero-sub { font-size: 19px; max-width: 56ch; margin-bottom: 34px; }
+.hero-sub strong { color: var(--ink); }
+.hero-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.avail { display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 600; color: var(--mute); }
+.avail .dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,.15); }
+
+/* ---------- trust strip ---------- */
+.trust { padding: 18px 0 8px; border-top: 1px solid var(--line); }
+.trust-label { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); margin-bottom: 4px; }
+.marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marquee-track { display: inline-flex; align-items: center; padding: 18px 0 26px; white-space: nowrap; animation: marquee 30s linear infinite; }
+/* margin (not gap) so every item — including the last of each set — carries its
+   trailing space; the track is then exactly 4 identical periods and translating
+   -25% moves exactly one period → seamless loop with no end gap */
+.marquee-track span { display: inline-flex; align-items: center; margin-right: 64px; font-weight: 800; font-size: 21px; color: #b9c0cd; letter-spacing: -0.01em; }
+/* real logos (EPAM, goLance) run monochrome in the same gray as the text names */
+.lg { display: block; color: #b9c0cd; }
+.lg-epam { width: 68px; height: 24px; }
+.lg-golance { width: 113px; height: 25px; }
+.lg-rogers { width: 116px; height: 23px; }
+.lg-novocure { width: 128px; height: 21px; }
+.lg-tbc { width: 92px; height: 25px; }
+.lg-gpi { width: 82px; height: 24px; }
+.lg-fido { width: 74px; height: 25px; }
+/* ADNOC is the Latin wordmark only. ADNOC's official lockups all carry the Arabic أدنوك
+   and set the falcon panel on the RIGHT (Arabic is RTL); the solid panel also cannot be
+   tinted flat grey here without reading as a filled slab. Sized to match ROGERS/GPI caps. */
+.lg-adnoc { width: 81px; height: 17px; }
+@keyframes marquee { to { transform: translateX(-25%); } }
+
+/* ---------- showreel: featured project film ---------- */
+.reel { padding: 44px 0 8px; }
+.reel-panel {
+  position: relative; overflow: hidden; border-radius: 28px;
+  display: grid; grid-template-columns: .92fr 1.08fr; gap: 40px; align-items: center;
+  padding: 44px 48px; color: #dfe5f4;
+  background:
+    radial-gradient(900px 480px at 92% -20%, rgba(84,116,255,.5), transparent 62%),
+    linear-gradient(158deg, #0b1026 0%, #121d52 60%, #1a2ba0 100%);
+}
+@media (max-width: 880px) { .reel-panel { grid-template-columns: 1fr; padding: 36px 26px; } }
+.reel-title { font-size: clamp(1.5rem, 2.6vw, 2.1rem); color: #fff; margin-bottom: 12px; line-height: 1.25; letter-spacing: -0.015em; }
+.reel-accent { color: #8fb3ff; }
+.reel-sub { font-size: 16px; color: rgba(223,229,244,.8); max-width: 44ch; margin-bottom: 22px; }
+.reel-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.reel-note { font-size: 13px; color: rgba(223,229,244,.55); font-weight: 600; }
+.btn-light { background: #fff; color: var(--ink) !important; }
+.btn-light:hover { background: #e8edff; }
+
+.reel-player {
+  position: relative; display: block; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 30px 60px -22px rgba(0,0,0,.55);
+  outline-offset: 4px;
+}
+.reel-player img { display: block; width: 100%; height: auto; transform: scale(1.01); transition: transform .8s cubic-bezier(.2,.65,.25,1); }
+.reel-player:hover img { transform: scale(1.045); }
+/* same glass treatment as .c2vid-play on the case page — one play button across
+   the site, over the same poster */
+.reel-play {
+  position: absolute; top: 50%; left: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px;
+  border-radius: 50%; color: #fff;
+  background: linear-gradient(150deg, rgba(255,255,255,.30), rgba(255,255,255,.10) 62%);
+  -webkit-backdrop-filter: blur(15px) saturate(175%);
+  backdrop-filter: blur(15px) saturate(175%);
+  border: 1px solid rgba(255,255,255,.40);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.60),
+    inset 0 -18px 30px rgba(255,255,255,.05),
+    0 20px 48px -14px rgba(0,0,0,.60);
+  transition: transform .4s cubic-bezier(.22,.61,.36,1), background .35s ease, border-color .35s ease;
+}
+.reel-play::before {
+  content: ""; position: absolute; inset: -11px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.20);
+  transition: transform .55s cubic-bezier(.22,.61,.36,1), opacity .55s ease;
+}
+.reel-player:hover .reel-play::before { transform: scale(1.14); opacity: .45; }
+.reel-play svg { width: 23px; height: 23px; fill: currentColor; filter: drop-shadow(0 2px 5px rgba(0,0,0,.45)); }
+.reel-player:hover .reel-play {
+  transform: scale(1.07);
+  background: linear-gradient(150deg, rgba(255,255,255,.42), rgba(255,255,255,.16) 62%);
+  border-color: rgba(255,255,255,.58);
+}
+.reel-chip {
+  position: absolute; left: 14px; bottom: 12px;
+  font-size: 12.5px; font-weight: 700; color: #fff;
+  background: rgba(11,16,38,.72); padding: 7px 13px; border-radius: var(--r-pill);
+  backdrop-filter: blur(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-player img, .reel-player:hover img { transform: none; transition: none; }
+  .reel-play, .reel-player:hover .reel-play { transition: none; transform: none; }
+  .reel-play::before, .reel-player:hover .reel-play::before { transition: none; transform: none; }
+}
+
+/* ---------- work ---------- */
+.work { padding: 88px 0 40px; }
+.section-title { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 14px; }
+.section-sub { max-width: 60ch; margin-bottom: 44px; font-size: 17.5px; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+@media (max-width: 880px) { .cards { grid-template-columns: 1fr; } }
+
+.card {
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-radius: var(--r-lg); padding: 34px 34px 28px; text-decoration: none;
+  color: var(--body);
+  position: relative; overflow: hidden;
+  transition: transform .5s cubic-bezier(.2,.65,.25,1), box-shadow .5s cubic-bezier(.2,.65,.25,1);
+}
+.card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px -24px rgba(14,27,44,.28); }
+/* stagger the grid entrance */
+.cards .card:nth-child(2) { transition-delay: .07s; }
+.cards .card:nth-child(3) { transition-delay: .1s; }
+.cards .card:nth-child(4) { transition-delay: .17s; }
+.cards .card.in { transition-delay: 0s; } /* hover shouldn't inherit reveal delay */
+.tint-blue  { background: var(--tint-blue); }
+.tint-green { background: var(--tint-green); }
+.tint-sand  { background: var(--tint-sand); }
+.tint-rose  { background: var(--tint-rose); }
+
+.card-kicker { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); margin-bottom: 12px; }
+.card h3 { font-size: 21.5px; line-height: 1.3; margin-bottom: 12px; letter-spacing: -0.015em; }
+.card-blurb { font-size: 15.5px; margin-bottom: 16px; }
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.chips li {
+  font-size: 13px; font-weight: 700; color: var(--ink);
+  background: color-mix(in srgb, #ffffff 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  padding: 6px 12px; border-radius: var(--r-pill);
+}
+.card-cta { font-weight: 700; color: var(--ink); font-size: 15px; display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; }
+.card:hover .card-cta { color: var(--accent); }
+.card:hover .card-cta .btn-arrow { transform: translateX(4px); }
+.card-cta .btn-arrow { transition: transform .25s ease; }
+
+/* ---------- CSS mockup placeholders ---------- */
+.mock { position: relative; margin-top: 6px; }
+.mock-window {
+  background: #fff; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 18px 40px -18px rgba(14,27,44,.28);
+  transform: rotate(-1.2deg);
+  transition: transform .35s ease;
+}
+.card:hover .mock-window { transform: rotate(0deg) translateY(-4px); }
+.mock-bar { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.mock-bar i { width: 9px; height: 9px; border-radius: 50%; background: #e3e6ec; }
+.mock-body { display: flex; min-height: 150px; }
+.mock-side { width: 22%; background: #f3f5f8; }
+.mock-main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.mock-main.full { width: 100%; }
+.mock-line { height: 9px; border-radius: 6px; background: #edf0f4; }
+.w40{width:40%} .w50{width:50%} .w60{width:60%} .w70{width:70%} .w80{width:80%} .w90{width:90%}
+.mock-blocks { display: flex; gap: 10px; }
+.mock-blocks b { flex: 1; height: 42px; border-radius: 8px; background: #f0f3f7; }
+.mock-table { display: flex; flex-direction: column; gap: 6px; }
+.mock-table i { height: 12px; border-radius: 4px; background: #f0f3f7; }
+.mock-match { border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.badge { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .06em; color: #0a7d43; background: #dcf5e7; padding: 4px 8px; border-radius: 6px; }
+.mock-tile { display: flex; gap: 12px; align-items: center; }
+.mock-thumb { width: 54px; height: 54px; border-radius: 10px; background: #f0f3f7; flex: none; }
+.mock-tlines { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.mock-note {
+  position: absolute; bottom: -4px; right: 4px;
+  font-size: 11.5px; font-style: italic; color: var(--mute);
+  background: color-mix(in srgb, #fff 80%, transparent); padding: 3px 8px; border-radius: 6px;
+}
+
+/* ---------- stats ---------- */
+.stats { padding: 72px 0; }
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 44px 0;
+}
+@media (max-width: 880px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat { display: flex; flex-direction: column; gap: 6px; }
+.stat-num { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; color: var(--ink); letter-spacing: -0.03em; }
+.stat-label { font-size: 14.5px; color: var(--mute); font-weight: 600; max-width: 22ch; }
+
+/* ---------- contact ---------- */
+.contact { position: relative; padding: 60px 0 110px; overflow: hidden; }
+.contact-art {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255,106,61,.16) 1.5px, transparent 1.5px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(560px 340px at 78% 40%, #000, transparent);
+  mask-image: radial-gradient(560px 340px at 78% 40%, #000, transparent);
+}
+.contact-art::before {
+  content: ""; position: absolute; right: 6%; top: 10%; width: 480px; height: 320px;
+  background: radial-gradient(closest-side, rgba(255,106,61,.12), transparent);
+}
+.contact .wrap { position: relative; }
+.contact-title { font-size: clamp(2.4rem, 5.5vw, 4rem); margin-bottom: 16px; }
+.contact-sub { max-width: 54ch; margin-bottom: 32px; }
+
+/* ---------- footer ---------- */
+.footer { border-top: 1px solid var(--line); padding: 26px 0; }
+.footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: var(--mute); }
+.footer-note { font-weight: 600; }
+
+/* ---------- section kicker (accent bar + label) ---------- */
+.kicker {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--mute); margin-bottom: 18px;
+}
+.kbar { width: 4px; height: 16px; border-radius: 2px; background: var(--accent); flex: none; }
+
+/* ---------- card image (dummy visuals until real screens) ---------- */
+.card-img {
+  position: relative; border-radius: 16px; overflow: hidden; margin-top: 8px;
+  box-shadow: 0 18px 40px -18px rgba(14,27,44,.28);
+}
+.card-img img {
+  display: block; width: 100%; height: 230px; object-fit: cover;
+  transform: scale(1.07);
+  transition: transform .9s cubic-bezier(.2,.65,.25,1);
+}
+.card.in .card-img img { transform: scale(1); }
+.card.in:hover .card-img img { transform: scale(1.05); }
+.card-img figcaption {
+  position: absolute; bottom: 8px; right: 8px;
+  font-size: 11px; font-style: italic; color: var(--ink);
+  background: color-mix(in srgb, #fff 82%, transparent);
+  padding: 3px 9px; border-radius: 7px;
+}
+
+/* ---------- work marquee: auto-scrolling project posters ---------- */
+/* Same seamless-loop mechanism as the recommendations marquee: the track holds
+   two identical sets of cards and translates by -50%, so the second set lands
+   exactly where the first began. Each card owns its trailing gap via margin-right
+   (not `gap`) so -50% is a pixel-perfect loop point regardless of card count. */
+.work-marquee {
+  /* extra bottom room so the project cards' (large) hover shadow isn't clipped */
+  overflow: hidden; padding: 18px 0 52px;
+  /* No edge fade, unlike the other marquees: those hold light content, where a
+     fade melts into the page. These posters are dark — any fade to the light
+     background reads as a smear painted over the card, so the viewport edge
+     cuts them clean instead (Horizon-style). */
+}
+.work-track { display: flex; width: max-content; animation: work-scroll 48s linear infinite; }
+.work-marquee:hover .work-track { animation-play-state: paused; }
+@keyframes work-scroll { to { transform: translateX(-50%); } }
+
+.pcard {
+  /* ONE inset for every edge in the card. The copy, the corner affordance and
+     the screen box all read against the same vertical line, so they share a
+     single number — they were 26 / 20 / 16 and the mismatch was visible. */
+  --pcard-pad: 26px;
+  width: 350px; height: 500px; flex: none; margin-right: 24px;
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  border-radius: var(--r-lg); text-decoration: none; color: rgba(255,255,255,.86);
+  border: 1px solid rgba(255,255,255,.07);
+  transition: transform .5s cubic-bezier(.2,.65,.25,1), box-shadow .5s cubic-bezier(.2,.65,.25,1);
+}
+.pcard:hover { transform: translateY(-8px); box-shadow: 0 34px 60px -24px rgba(14,27,44,.45); }
+
+/* dark brand posters (user direction 2026-07-31, agency-card reference):
+   each project gets its own dark background — a brand-colored glow plus a
+   per-project pattern — with the screens shown in real device mockups
+   (assets/pcard-*-device.webp, generated by ../pcard_mockups.py).
+   The site-wide `.tint-*` bands stay light; these override .pcard only. */
+.pcard.tint-blue {  /* TBC — deep banking navy, concentric arcs, sky-blue glow */
+  background:
+    repeating-radial-gradient(circle at 112% -14%, transparent 0 46px, rgba(255,255,255,.045) 46px 47.5px),
+    radial-gradient(120% 85% at 82% 108%, rgba(0,163,224,.38), transparent 62%),
+    linear-gradient(160deg, #0c2743, #06182e);
+}
+.pcard.tint-green {  /* goLance — the gl-reel poster language: #020b2e, dot grid, purple glow */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Ccircle cx='1.5' cy='1.5' r='1' fill='rgba(255,255,255,0.10)'/%3E%3C/svg%3E"),
+    radial-gradient(95% 75% at 88% 100%, rgba(116,52,250,.42), transparent 65%),
+    radial-gradient(55% 45% at 8% 108%, rgba(202,117,208,.22), transparent 70%),
+    #020b2e;
+}
+.pcard.tint-sand {  /* Novocure — clinical navy, plus-grid, soft cyan glow */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 10v8M10 14h8' stroke='rgba(255,255,255,0.07)' stroke-width='1'/%3E%3C/svg%3E"),
+    radial-gradient(110% 80% at 85% 110%, rgba(97,180,228,.34), transparent 62%),
+    linear-gradient(165deg, #093057, #041e3a);
+}
+.pcard.tint-rose {  /* Rogers — near-black maroon, honeycomb, red glow */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='rgba(255,255,255,0.05)'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50' fill='none' stroke='rgba(255,255,255,0.05)'/%3E%3C/svg%3E"),
+    radial-gradient(110% 80% at 80% 112%, rgba(238,39,34,.36), transparent 60%),
+    linear-gradient(160deg, #23090b, #120405);
+}
+
+.pcard-top { padding: var(--pcard-pad) var(--pcard-pad) 0; }
+.pcard-cat { font-size: 11.5px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 12px; }
+/* brand logo replaces the old text name (alt text keeps the name for AT).
+   goLance/Novocure wordmarks contain near-navy fills that vanish on dark,
+   so they're knocked out white; TBC (sky blue) and Rogers (red) carry their
+   own color against the dark ground. Heights tuned per wordmark. */
+.pcard-logo { margin-bottom: 12px; }
+.pcard-logo img { display: block; width: auto; height: 30px; }
+.pcard.tint-green .pcard-logo img { height: 24px; filter: brightness(0) invert(1); }
+.pcard.tint-sand  .pcard-logo img { height: 19px; filter: brightness(0) invert(1); }
+.pcard.tint-rose  .pcard-logo img { height: 22px; }
+.pcard-desc { font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.86); }
+.pcard-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+.pcard-chips li {
+  font-size: 11.5px; font-weight: 700; color: #fff;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  padding: 5px 10px; border-radius: var(--r-pill);
+}
+
+/* the screen sits in a plain rounded box inside the card (Temo's call:
+   no device frames) — same box size on every card, bottom-anchored, so the
+   row stays aligned; the backgrounds carry the variety. Hover lifts it. */
+.pcard-figure { margin-top: 18px; flex: 1 1 auto; min-height: 200px; position: relative; }
+.pcard-screen {
+  position: absolute; left: var(--pcard-pad); right: var(--pcard-pad); bottom: var(--pcard-pad); height: 220px;
+  display: block; overflow: hidden; border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 20px 38px -16px rgba(0,0,0,.6);
+  transition: transform .55s cubic-bezier(.2,.65,.25,1);
+}
+.pcard-screen img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: top center;
+}
+.pcard:hover .pcard-screen { transform: translateY(-7px); }
+
+/* corner affordance — always visible, nudges + turns accent on hover */
+.pcard-go {
+  position: absolute; top: var(--pcard-pad); right: var(--pcard-pad); z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255,255,255,.14); color: #fff;
+  transition: transform .35s ease, background .35s ease;
+}
+.pcard:hover .pcard-go { transform: translate(2px, -2px) scale(1.08); background: var(--accent); }
+.pcard-go svg { width: 15px; height: 15px; }
+
+@media (max-width: 880px) {
+  .pcard { width: 276px; height: 432px; margin-right: 16px; }
+  .pcard-logo img { height: 23px; }
+  .pcard.tint-green .pcard-logo img { height: 21px; }
+  .pcard.tint-sand  .pcard-logo img { height: 17px; }
+  .pcard.tint-rose  .pcard-logo img { height: 19px; }
+  .pcard-desc { font-size: 14px; }
+  /* CHIPS MUST STAY ON ONE ROW HERE. There are only 222px of usable width and
+     the card's fixed height has no room for a second row: at the desktop size
+     Rogers' two chips measured 234px, wrapped, pushed .pcard-top to 232px and
+     drove the screen 20px through the card's floor, where overflow:hidden
+     sliced the bottom off the thumbnail. At 10.5px/8px Rogers clears by 12.6px
+     and goLance — the next tightest, and previously clearing by just 1.7px —
+     by 25.4px. Re-measure this if any chip copy gets longer. */
+  .pcard-chips { gap: 6px; }
+  .pcard-chips li { font-size: 10.5px; padding: 5px 8px; }
+  /* inset stays --pcard-pad here too: .pcard-top keeps its 26px at this
+     breakpoint, so the screen has to hold the same line to stay aligned. */
+  .pcard-screen { height: 176px; }
+  .work-track { animation-duration: 38s; }
+}
+
+/* accessible fallback: no motion → a clean centered grid of the real cards */
+@media (prefers-reduced-motion: reduce) {
+  .work-marquee { overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .work-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; gap: 24px; }
+  .pcard { margin-right: 0; }
+  .pcard.is-clone { display: none; }
+  .pcard-screen { transition: none; }
+}
+
+/* ---------- recommendations marquee ---------- */
+.words { padding: 88px 0 56px; }
+.sample-note { font-style: italic; }
+.t-marquee {
+  /* generous vertical padding so the cards' box-shadows render inside the
+     overflow:hidden clip (which is needed to hide the scrolling track) */
+  display: flex; flex-direction: column; gap: 20px; overflow: hidden; padding: 16px 0 40px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.t-row { display: flex; gap: 22px; width: max-content; align-items: stretch; animation: t-scroll 60s linear infinite; }
+.t-row-b { animation-duration: 75s; animation-direction: reverse; }
+.t-marquee:hover .t-row, .t-marquee:focus-within .t-row { animation-play-state: paused; }
+@keyframes t-scroll { to { transform: translateX(-50%); } }
+
+.t-card {
+  width: 384px; flex: none; display: flex; flex-direction: column; gap: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px 26px 22px;
+  box-shadow: 0 10px 30px -18px rgba(14,27,44,.16);
+  transition: transform .45s cubic-bezier(.2,.65,.25,1), box-shadow .45s cubic-bezier(.2,.65,.25,1);
+}
+.t-card:hover { transform: translateY(-5px); box-shadow: 0 22px 44px -20px rgba(14,27,44,.24); }
+
+/* brand logo slot — one aligned top-left baseline on every card (replaces the old grey text chip) */
+.t-brand { display: flex; align-items: center; height: 24px; }
+.t-brand img { display: block; width: auto; }
+.t-blogo-novocure { height: 14px; }
+.t-blogo-rogers   { height: 16px; }
+.t-blogo-golance  { height: 19px; }
+.t-blogo-epam     { height: 22px; }
+/* Google's official 4-colour wordmark (nominative attribution use) */
+.t-blogo-google   { height: 22px; }
+/* recommenders with no named employer carry a small category label instead of a logo */
+.t-brand--label { font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--mute); }
+
+.t-quote { font-size: 15.5px; line-height: 1.55; color: var(--ink); font-weight: 500; }
+.t-quote--clamp { display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+.t-person { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+.t-person b { display: block; font-size: 14px; color: var(--ink); }
+.t-person i { display: block; font-size: 12.5px; color: var(--mute); font-style: normal; }
+.t-avatar { width: 40px; height: 40px; border-radius: 50%; flex: none; }
+.av-1 { background: linear-gradient(135deg, #d9b49a, #8a5c3f); }
+.av-2 { background: linear-gradient(135deg, #aab6d3, #5a6c96); }
+.av-3 { background: linear-gradient(135deg, #c9aed4, #7d5591); }
+.av-4 { background: linear-gradient(135deg, #a8cfd2, #4e7f84); }
+.av-5 { background: linear-gradient(135deg, #8fb3ff, #2e5bff); }
+.av-6 { background: linear-gradient(135deg, #e0c38c, #b07d2e); }
+.av-7 { background: linear-gradient(135deg, #9fd3ab, #2f8f57); }
+/* real headshot layered over the initials avatar — the ::after shows the photo
+   when it loads and is transparent (revealing gradient + initials) until the
+   image file is added, so cards never look broken while photos are pending */
+.t-avatar.t-pic { position: relative; overflow: hidden; }
+.t-avatar.t-pic::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--pic) center/cover no-repeat; }
+
+/* ---------- full-bleed photo testimonial cards (Andrés, Rebecca) ---------- */
+/* photo cards run wider (landscape) so the quote fits in ~2 lines below the face */
+.t-photo { width: 600px; position: relative; overflow: hidden; border: none; min-height: 320px; padding: 22px 26px; }
+.t-photo-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; z-index: 0;
+  transition: transform .6s cubic-bezier(.2,.65,.25,1);
+}
+@media (max-width: 640px) {
+  .t-photo { width: 86vw; max-width: 380px; min-height: 360px; }
+  .t-photo-img { object-position: center 28%; }
+}
+.t-photo:hover .t-photo-img { transform: scale(1.05); }
+/* two-sided scrim: darken the top for the logo and the bottom for the quote, keep the face clear */
+.t-photo::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(11,16,38,.52) 0%, rgba(11,16,38,0) 24%, rgba(11,16,38,0) 40%, rgba(11,16,38,.9) 100%);
+}
+.t-photo--bright::before {
+  background: linear-gradient(to bottom, rgba(11,16,38,.5) 0%, rgba(11,16,38,0) 22%, rgba(11,16,38,.18) 46%, rgba(11,16,38,.94) 100%);
+}
+.t-photo > .t-brand { position: relative; z-index: 2; margin-bottom: auto; }
+.t-photo-body { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 12px; }
+.t-photo .t-quote { color: #fff; font-weight: 600; text-shadow: 0 1px 10px rgba(0,0,0,.35); }
+.t-photo-attr b { display: block; font-size: 14px; color: #fff; }
+.t-photo-attr i { display: block; font-size: 12.5px; color: rgba(255,255,255,.85); font-style: normal; }
+/* white knockout logos over the photo */
+.t-brand--knockout img { filter: brightness(0) invert(1); }
+
+/* ---------- reveal animations ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.65,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: .08s; }
+.reveal.d2 { transition-delay: .16s; }
+.reveal.d3 { transition-delay: .24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .marquee-track { animation: none; flex-wrap: wrap; white-space: normal; }
+  .t-row { animation: none; flex-wrap: wrap; width: auto; }
+  .t-photo-img, .t-photo:hover .t-photo-img { transform: none; transition: none; }
+  .card-img img, .card.in .card-img img { transform: none; transition: none; }
+  .btn, .card, .t-card, .mock-window { transition: none; }
+}
+
+/* ---------- testimonial extras (real recs) ---------- */
+.t-avatar { display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 13.5px; letter-spacing: .02em; }
+.t-more { justify-content: center; gap: 12px; background: var(--tint-blue); border: none; text-decoration: none; }
+.t-more .card-cta { color: var(--accent-ink); }
+
+/* Touch devices: turn the content marquees (testimonials + projects) into native
+   swipeable carousels. The CSS transform animation can't be swiped and its :hover
+   pause sticks on a tap (freezing it). On coarse pointers we drop the animation and
+   make the track natively scrollable; script.js drives a gentle auto-advance that
+   pauses while a finger is down and eases back in after release. (The decorative
+   logo strip keeps its simple CSS auto-scroll — it's not meant to be swiped.) */
+@media (hover: none) and (pointer: coarse) {
+  .t-row, .work-track {
+    width: auto; overflow-x: auto; overflow-y: hidden; animation: none; transform: none;
+    -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    scrollbar-width: none; -ms-overflow-style: none;
+    /* the row is the scroll+clip box on mobile — pad it so card shadows show */
+    padding: 10px 0 28px;
+  }
+  .t-row::-webkit-scrollbar, .work-track::-webkit-scrollbar { display: none; }
+  /* the shadow room now lives on the scroller, so trim the marquee's own padding */
+  .t-marquee, .work-marquee { padding-top: 4px; padding-bottom: 8px; }
+  /* one testimonial per view (they scroll in a single row on mobile) */
+  .t-card { width: 86vw; max-width: 380px; }
+  /* all cards share the tallest card's height; centre the plain cards' content so
+     short quotes (e.g. Viktor) read as balanced rather than leaving a big gap */
+  .t-card:not(.t-photo):not(.t-more) { justify-content: center; }
+  .t-card:not(.t-photo) .t-person { margin-top: 0; }
+}
+
+/* ---------- case-study pages ---------- */
+.case-hero { padding: 56px 0 8px; }
+.case-back { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: var(--mute); text-decoration: none; margin-bottom: 30px; }
+.case-back:hover { color: var(--accent); }
+.case-hero h1 { font-size: clamp(2rem, 4.4vw, 3.4rem); line-height: 1.1; max-width: 26ch; margin: 6px 0 30px; }
+.case-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; border-top: 1px solid var(--line); padding-top: 24px; }
+@media (max-width: 880px) { .case-meta { grid-template-columns: 1fr 1fr; } }
+.case-meta b { display: block; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--mute); margin-bottom: 5px; }
+.case-meta span { font-size: 14.5px; color: var(--ink); font-weight: 600; line-height: 1.45; }
+
+.case-cover { position: relative; border-radius: var(--r-lg); overflow: hidden; margin: 38px 0 26px; box-shadow: 0 24px 60px -26px rgba(14,27,44,.3); }
+.case-cover img { display: block; width: 100%; height: 430px; object-fit: cover; }
+.case-cover figcaption, .m-fig figcaption {
+  position: absolute; bottom: 8px; right: 8px; font-size: 11px; font-style: italic; color: var(--ink);
+  background: color-mix(in srgb, #fff 82%, transparent); padding: 3px 9px; border-radius: 7px;
+}
+@media (max-width: 880px) { .case-cover img { height: 240px; } }
+
+.m-band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; border-radius: 22px; padding: 30px 26px; }
+.m-tile { display: flex; flex-direction: column; gap: 4px; padding: 0 10px; }
+.m-num { font-size: clamp(1.6rem, 2.6vw, 2.2rem); font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+.m-label { font-size: 13.5px; color: var(--body); font-weight: 600; }
+
+.case-sec { padding: 46px 0 6px; }
+.sec-text { max-width: 72ch; font-size: 17px; line-height: 1.7; }
+.case-skills { margin-top: 18px; font-size: 14px; font-weight: 700; color: var(--mute); max-width: 80ch; }
+.reflection-text { font-style: italic; font-size: 17px; color: var(--ink); max-width: 66ch; border-left: 3px solid var(--accent); padding-left: 16px; }
+
+.moment { display: grid; grid-template-columns: 1.05fr .95fr; gap: 38px; align-items: center; margin: 40px 0; }
+.moment.flip .m-fig { order: 2; }
+@media (max-width: 880px) { .moment { grid-template-columns: 1fr; gap: 18px; } .moment.flip .m-fig { order: 0; } }
+.m-fig { position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 44px -20px rgba(14,27,44,.26); margin: 0; }
+.m-fig img { display: block; width: 100%; height: 310px; object-fit: cover; transform: scale(1.06); transition: transform .9s cubic-bezier(.2,.65,.25,1); }
+.moment.in .m-fig img { transform: scale(1); }
+
+/* full-bleed moment: a dense research/diagnosis figure shown at natural ratio,
+   full content width, with a caption below (used for TBC's tree-testing artifact) */
+.moment-wide { display: block; margin: 40px 0; }
+.moment-wide .m-txt { max-width: 68ch; margin-bottom: 22px; }
+.m-fig--wide { position: static; overflow: visible; border-radius: 0; box-shadow: none; }
+.m-fig--wide img { height: auto; object-fit: contain; transform: none; border-radius: var(--r-md); box-shadow: 0 22px 50px -22px rgba(14,27,44,.32); }
+.moment-wide.in .m-fig--wide img { transform: none; }
+.m-fig--wide figcaption { position: static; margin: 14px 2px 0; max-width: 70ch; font-size: 13.5px; font-style: italic; color: var(--mute); background: none; }
+@media (max-width: 880px) { .moment-wide { margin: 28px 0; } }
+.m-txt h3 { font-size: 21px; margin-bottom: 10px; letter-spacing: -.015em; }
+.m-txt p { font-size: 16px; line-height: 1.65; }
+
+.also { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 26px 30px; margin-top: 8px; }
+.also-label { font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--mute); margin-bottom: 12px; }
+.also ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.also li { position: relative; padding-left: 24px; font-size: 15.5px; line-height: 1.55; }
+.also li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+
+.case-next {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  border-radius: var(--r-lg); padding: 36px 40px; margin-top: 56px; text-decoration: none; color: var(--body);
+  transition: transform .45s cubic-bezier(.2,.65,.25,1), box-shadow .45s cubic-bezier(.2,.65,.25,1);
+}
+.case-next:hover { transform: translateY(-5px); box-shadow: 0 26px 52px -24px rgba(14,27,44,.26); }
+.case-next h2 { font-size: clamp(1.2rem, 2.4vw, 1.7rem); line-height: 1.25; max-width: 34ch; }
+.case-next-arrow { font-size: 34px; font-weight: 800; color: var(--ink); transition: transform .3s ease; flex: none; }
+.case-next:hover .case-next-arrow { transform: translateX(8px); color: var(--accent); }
+
+.case-cta { padding: 76px 0 90px; }
+
+/* ---------- AI section: shared ink, dot grid, HUD orb ---------- */
+/* the same dot grid used on the hero (.fx-dots) and contact (.contact-art),
+   retuned for the dark band: light periwinkle dots at a low alpha so they
+   stay quiet against the navy, with a soft radial mask that keeps them densest
+   up-center and fades them out at the edges. Static, rasterized once. */
+.ai-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255,150,107,.06) 1px, transparent 1px);
+  background-size: 13px 13px;
+  -webkit-mask-image: radial-gradient(150% 120% at 50% 38%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(150% 120% at 50% 38%, #000 55%, transparent 100%);
+}
+
+.ai-title { color: #fff; margin-bottom: 14px; }
+.ai-accent { color: #ff8a5c; }
+.kicker-light { color: #bfae9f; }
+.kicker-light .kbar { background: #ff6a3d; }
+.ai-sub { color: rgba(223,229,244,.82); font-size: 17.5px; max-width: 54ch; }
+
+/* HUD orb (SVG), blueprint-schematic style: a static drawing layer (dot grid,
+   crosshairs, brackets, guide tracks, annotations) under rotating rings,
+   satellites, and a radar sweep. All motion is transform-only rotation/scale;
+   every glow is a static gradient — no filters to re-rasterize per frame. */
+.orb2 { position: relative; width: min(330px, 84%); margin: 0 auto; }
+.orb2 svg { display: block; width: 100%; height: auto; overflow: visible; }
+.o-ticks, .o-halo, .o-coreglow, .o-ping, .o-innerarc,
+.o-ring1, .o-ring2, .o-ring3, .o-sweep { transform-origin: 200px 200px; transform-box: view-box; }
+.o-sweep { animation: orb-spin 6s linear infinite; }
+.o-ring1 { animation: orb-spin 9s linear infinite; }
+.o-ring2 { animation: orb-spin 22s linear infinite reverse; }
+.o-ring3 { animation: orb-spin 30s linear infinite; }
+.o-ticks { animation: orb-spin 90s linear infinite reverse; }
+.o-halo { animation: halo-breathe 6s ease-in-out infinite; }
+.o-coreglow { animation: glow-pulse 4.5s ease-in-out infinite; }
+/* sonar pings emanate from the drawn core; invisible when animation is off */
+.o-ping { animation: core-ping 3.6s cubic-bezier(.25,.6,.35,1) infinite; }
+.o-ping.p2 { animation-delay: 1.8s; }
+.o-innerarc { animation: orb-spin 7s linear infinite reverse; }
+@keyframes orb-spin { to { transform: rotate(360deg); } }
+@keyframes halo-breathe { 50% { transform: scale(1.07); opacity: .8; } }
+@keyframes glow-pulse { 50% { transform: scale(1.12); opacity: .82; } }
+@keyframes core-ping {
+  0% { transform: scale(.16); opacity: .65; }
+  70% { opacity: .2; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .o-ring1, .o-ring2, .o-ring3, .o-sweep,
+  .o-ticks, .o-halo, .o-ping, .o-innerarc, .o-coreglow { animation: none; }
+}
+
+/* ---------- hero: split layout + floating artifacts ---------- */
+.hero-wrap { display: grid; grid-template-columns: 1.02fr .98fr; gap: 44px; align-items: center; }
+.hero-wrap h1 { font-size: clamp(2.4rem, 4.6vw, 4rem); }
+@media (max-width: 980px) { .hero-wrap { grid-template-columns: 1fr; } .hero-art { display: none; } }
+
+/* word-by-word headline entrance */
+.hero h1 .w { display: inline-block; opacity: 0; transform: translateY(28px) rotate(1.2deg); transition: opacity .5s ease, transform .65s cubic-bezier(.2,.65,.25,1); }
+.hero h1.h1-in .w { opacity: 1; transform: none; }
+/* shimmer on the accent word */
+.hero h1 .accent {
+  background: linear-gradient(100deg, #2e5bff 20%, #86a8ff 40%, #2e5bff 60%);
+  background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 7s ease-in-out infinite;
+}
+@keyframes shimmer { 50% { background-position: 100% 0; } }
+
+.hero-art { position: relative; height: 540px; }
+.fx { position: absolute; will-change: transform; z-index: 5; }
+.fx-inner { animation: float 7s ease-in-out infinite; }
+.f1 { left: -2%; top: 0; }   .f1 .fx-inner { animation-duration: 8s; }
+.f3 { left: 80%; top: 60%; } .f3 .fx-inner { animation-duration: 6.5s; animation-delay: -1.5s; }
+.f6 { left: 5%; top: 83%; }  .f6 .fx-inner { animation-duration: 8.5s; animation-delay: -5s; }
+@keyframes float { 50% { transform: translateY(-13px); } }
+
+/* ---------- hero reel: framed Ken-Burns showreel (prototype arts) ---------- */
+/* One browser-framed "screen" playing a cut list: each shot's img runs a slow
+   zoom/pan (the m-* class picks the move), script.js dissolves between shots
+   and updates the lower-third tag + progress dots. The frame stays when the
+   imgs are swapped for real screens — or replaced by a looping mp4. */
+.hreel {
+  position: absolute; left: 0; right: 3%; top: 5%; height: 440px; margin: 0;
+  background: #fff; border: 1px solid var(--line); border-radius: 22px;
+  box-shadow: 0 40px 80px -30px rgba(14,27,44,.35); overflow: hidden;
+}
+.hreel-chrome {
+  position: relative; z-index: 2; height: 34px;
+  display: flex; align-items: center; gap: 6px; padding: 0 14px;
+  background: #fff; border-bottom: 1px solid var(--line);
+}
+.hreel-chrome i { width: 9px; height: 9px; border-radius: 50%; background: #e3e6ec; }
+.hreel-stage { position: absolute; inset: 34px 0 0; overflow: hidden; }
+.hreel-shot { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease; }
+.hreel-shot.on { opacity: 1; z-index: 1; }
+.hreel-shot.on.out { opacity: 0; z-index: 2; } /* outgoing dissolves above the incoming */
+.hreel-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* the move runs a hair longer than the shot is on screen, so it never freezes */
+.hreel-shot.on img { animation: 6.8s cubic-bezier(.3,.1,.3,1) forwards; }
+.m-in.on img     { animation-name: kb-in; }
+.m-mobile img    { transform-origin: 76% 55%; } /* dive toward the phone mock */
+.m-mobile.on img { animation-name: kb-mobile; }
+.m-pan.on img    { animation-name: kb-pan; }
+.m-out.on img    { animation-name: kb-out; }
+@keyframes kb-in     { from { transform: scale(1.03); } to { transform: scale(1.2) translate(-2.5%, -2%); } }
+@keyframes kb-mobile { from { transform: scale(1.35); } to { transform: scale(1.9); } }
+@keyframes kb-pan    { from { transform: scale(1.18) translateX(2.5%); } to { transform: scale(1.18) translateX(-3.5%); } }
+@keyframes kb-out    { from { transform: scale(1.24) translate(-2%, -1.5%); } to { transform: scale(1.04); } }
+.hreel-tag {
+  position: absolute; left: 14px; bottom: 12px; z-index: 3;
+  font-size: 12px; font-weight: 800; color: var(--ink);
+  background: color-mix(in srgb, #fff 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  padding: 6px 12px; border-radius: var(--r-pill);
+}
+.hreel-tag.bump { animation: tag-rise .5s ease; }
+@keyframes tag-rise { from { transform: translateY(8px); opacity: 0; } }
+.hreel-dots { position: absolute; right: 16px; bottom: 18px; z-index: 3; display: flex; gap: 6px; }
+.hreel-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(14,27,44,.22); transition: background .3s ease, transform .3s ease; }
+.hreel-dots i.on { background: var(--accent); transform: scale(1.25); }
+@media (prefers-reduced-motion: reduce) {
+  .hreel-shot { transition: none; }
+  .hreel-shot img { animation: none !important; }
+}
+
+.fx-glow { position: absolute; inset: -30px; background: radial-gradient(closest-side at 55% 45%, rgba(255,106,61,.15), transparent); }
+.fx-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,106,61,.18) 1.5px, transparent 1.5px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(closest-side at 55% 45%, #000 35%, transparent);
+  mask-image: radial-gradient(closest-side at 55% 45%, #000 35%, transparent);
+}
+.fx-card {
+  display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line);
+  border-radius: 16px; padding: 14px 16px;
+  box-shadow: 0 20px 44px -18px rgba(14,27,44,.24);
+}
+.fx-award { flex-direction: row; align-items: center; gap: 10px; border-radius: var(--r-pill); font-weight: 800; font-size: 13px; color: var(--ink); max-width: 250px; padding: 11px 18px; }
+.fx-match .badge { align-self: flex-start; }
+.fx-line { height: 8px; border-radius: 5px; background: #eef1f6; margin-top: 9px; }
+.fx-metric b { font-size: 27px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+.fx-metric i { font-size: 12px; color: var(--mute); font-style: normal; font-weight: 600; max-width: 18ch; margin-top: 3px; }
+.fx-wcag { flex-direction: row; align-items: center; gap: 9px; font-weight: 800; font-size: 13.5px; color: var(--ink); border-radius: var(--r-pill); padding: 11px 18px; }
+.wcag-check { width: 20px; height: 20px; border-radius: 50%; background: #dcf5e7; color: #0a7d43; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+.fx-cursor { display: flex; flex-direction: column; align-items: flex-start; filter: drop-shadow(0 8px 14px rgba(14,27,44,.28)); }
+.fx-cursor svg { width: 23px; height: 23px; }
+.fx-tag { margin-top: 2px; margin-left: 14px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 800; padding: 5px 11px; border-radius: var(--r-pill); }
+.fx-tag.tag-ai { background: #0a7d43; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero h1 .w { opacity: 1; transform: none; transition: none; }
+  .hero h1 .accent { animation: none; color: var(--accent); background: none; -webkit-background-clip: initial; background-clip: initial; }
+  .fx-inner { animation: none; }
+}
+
+.o-dashc { transform-origin: 200px 200px; transform-box: view-box; animation: orb-spin 24s linear infinite reverse; }
+.o-outer { transform-origin: 200px 200px; transform-box: view-box; animation: orb-spin 70s linear infinite; }
+
+/* ============================================================
+   HERO V2 — matmac-style try: intro curtain, giant discipline
+   marquee, retro Mac + rotating "open to work" badge, and a
+   cursor-weight intro line (script.js: hero v2 module).
+   v1 hero styles above are untouched (revert = git).
+   ============================================================ */
+
+/* --- intro curtain: accent sweep that lifts on load --- */
+.curtain {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--accent);
+  animation: h2curtain .7s cubic-bezier(.77,0,.18,1) .25s forwards;
+}
+@keyframes h2curtain { to { transform: translateY(-101%); } }
+
+.hero2 {
+  position: relative;
+  min-height: calc(100svh - 77px);
+  display: flex; align-items: flex-start; justify-content: center;
+  overflow: hidden;
+}
+
+/* --- giant background marquee --- */
+.hero2-marquee {
+  /* band center = mac visual center: nav 77 + stage (15vh-60) + 291/2, minus hero top */
+  position: absolute; left: 0; right: 0; top: calc(15vh + 86px);
+  transform: translateY(-50%);
+  z-index: 1; overflow: hidden; pointer-events: none;
+  opacity: 0; animation: h2fade .9s ease 1.15s forwards;
+}
+.hero2-marquee::before, .hero2-marquee::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: min(230px, 20vw); z-index: 2;
+}
+.hero2-marquee::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.hero2-marquee::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.hero2-mq-track { display: flex; width: max-content; animation: h2scroll 150s linear infinite; }
+.hero2-mq-track ul { display: flex; list-style: none; margin: 0; padding: 0; }
+.hero2-mq-track li {
+  white-space: nowrap; padding-left: .38em;
+  /* 1.35: room for descenders (y, g) — at 1.15 they clip on overflow:hidden */
+  font-size: clamp(64px, 12.5vw, 136px); font-weight: 500; line-height: 1.35;
+  letter-spacing: -0.045em;
+  color: color-mix(in srgb, var(--ink) 5.5%, transparent);
+}
+@keyframes h2scroll { to { transform: translateX(-50%); } }
+
+/* --- center stage --- */
+.hero2-stage {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  /* mac top lands at ~17% of the viewport, like the reference (171/900) */
+  padding: 0 24px; margin-top: calc(15vh - 60px);
+}
+
+/* --- the Mac --- */
+.hero2-mac {
+  position: relative; width: 210px; /* full mac.svg art is 706:978 — taller than the crop */
+  opacity: 0;
+  animation: h2mac .8s cubic-bezier(.2,.7,.2,1) .45s forwards;
+}
+@keyframes h2mac {
+  from { opacity: 0; transform: translateY(16px) scale(calc(var(--macScale, 1) * .96)); }
+  to   { opacity: 1; transform: translateY(0)    scale(var(--macScale, 1)); }
+}
+.hero2-macsvg { display: block; width: 100%; height: auto; }
+/* soft ground shadow (the old inline-svg ellipse died with the hand-drawn mac) */
+.hero2-mac::after {
+  content: ""; position: absolute; z-index: -1;
+  left: 12%; right: 12%; bottom: -8px; height: 20px;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(14, 27, 44, .18), transparent 72%);
+  filter: blur(5px);
+}
+.hero2-hello {
+  position: absolute; left: 50%; top: 30.9%; /* CRT center of the full mac.svg art */
+  width: 96px; height: auto; overflow: visible;
+  transform: translate(-50%, -50%) rotate(-3deg);
+}
+.hero2-hello .hh-text {
+  font-family: "Dancing Script", cursive; font-weight: 700; font-size: 46px;
+  fill: #2f3a4d;
+}
+/* the white mask stroke traces the pen route; as it draws, the text beneath
+   is revealed — handwriting animation in the real font */
+.hero2-hello .hh-mask {
+  fill: none; stroke: #fff; stroke-width: 10;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1; /* pathLength="1" on the path */
+  animation: h2draw 1.6s cubic-bezier(.4, .05, .55, .95) 1.15s forwards;
+}
+@keyframes h2draw { to { stroke-dashoffset: 0; } }
+.hero2-hello .hh-dot { opacity: 0; animation: h2fade .15s ease-out 2.85s forwards; }
+
+/* --- rotating badge + pulsing dot --- */
+.hero2-badge {
+  /* dot (badge center) sits right on the mac's top-right corner, like the reference */
+  position: absolute; top: -77px; right: -77px;
+  width: 158px; height: 158px; z-index: 3;
+  opacity: 0; animation: h2pop .6s cubic-bezier(.2,.7,.3,1.4) .95s forwards;
+}
+@keyframes h2pop { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+.hero2-ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: h2spin 18s linear infinite; }
+.hero2-ring text {
+  font-family: var(--font); font-size: 12.5px; font-weight: 700;
+  letter-spacing: 1.8px; fill: var(--mute);
+}
+@keyframes h2spin { to { transform: rotate(360deg); } }
+.hero2-dot { position: absolute; inset: 0; margin: auto; width: 16px; height: 16px; }
+.hero2-dot::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: #38bdf8; opacity: .75;
+  animation: h2ping 1.8s cubic-bezier(0, 0, .2, 1) infinite;
+}
+.hero2-dot::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: linear-gradient(135deg, #4ade80, #16a34a);
+  border: 1px solid #22c55e;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, .35);
+}
+@keyframes h2ping { 0% { transform: scale(1); opacity: .75; } 75%, 100% { transform: scale(2.4); opacity: 0; } }
+
+/* --- intro line (chars get weight from cursor proximity — script.js) --- */
+.hero2-intro {
+  /* mac.svg is full-bleed (no padding below the body) — real gap needed */
+  margin-top: 18px; max-width: 620px;
+  text-align: center; text-wrap: balance;
+  font-size: clamp(22px, 3.2vw, 30px); line-height: 1.26;
+  letter-spacing: -0.02em; font-weight: 500;
+  color: color-mix(in srgb, var(--ink) 82%, var(--body));
+  opacity: 0; animation: h2up .7s ease .7s forwards;
+}
+.hero2-intro .w2 { display: inline-block; white-space: nowrap; }
+@keyframes h2up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes h2fade { to { opacity: 1; } }
+
+@media (max-width: 760px) {
+  .hero2 { min-height: calc(100svh - 58px); }
+  /* height-aware: pins the intro→cards gap to ~70px on any phone height
+     (stage flow is ~430px tall; cards top sits ~144px above hero bottom) */
+  .hero2-stage { margin-top: clamp(16px, 100svh - 700px, 180px); }
+  /* wider mac on mobile; --macScale (transform) shrinks mac+hello+badge together */
+  .hero2-mac { --macScale: .8; width: 240px; }
+  .hero2-intro { font-size: 21px; margin-top: 12px; max-width: 430px; }
+  /* tracks the stage offset above + half of the mac box (240w art = 332h) */
+  .hero2-marquee { top: calc(clamp(16px, 100svh - 700px, 180px) + 166px); }
+}
+/* short phones (SE etc.): smaller mac buys back flow height for the card gap */
+@media (max-width: 760px) and (max-height: 719px) {
+  .hero2-mac { width: 210px; }
+  .hero2-marquee { top: calc(clamp(16px, 100svh - 700px, 180px) + 146px); } /* 210w art = 291h */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain { display: none; }
+  .hero2-marquee, .hero2-mac, .hero2-badge, .hero2-intro { opacity: 1; animation: none; }
+  .hero2-mac { transform: scale(var(--macScale, 1)); }
+  .hero2-hello .hh-mask { animation: none; stroke-dashoffset: 0; }
+  .hero2-hello .hh-dot { animation: none; opacity: 1; }
+  .hero2-mq-track, .hero2-ring { animation: none; }
+  .hero2-dot::before { animation: none; opacity: 0; }
+}
+
+/* --- hero v2: project cards drifting along an arc --- */
+.hero2-arc {
+  /* 69vh — same anchor as the reference; hero starts 66px down (nav) */
+  position: absolute; left: 50%; top: calc(69vh - 77px); z-index: 3;
+  width: 1730px; height: 130px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  /* hidden, not merely transparent: an opacity-0 element still hit-tests, and
+     the cards are links now — without this the whole 1730px band is clickable
+     while invisible, for the 1.35s before the entrance runs. Own keyframe
+     because h2fade is shared with the marquee and the hello dot. */
+  visibility: hidden;
+  opacity: 0; animation: h2arcin .9s ease 1.35s forwards;
+}
+@keyframes h2arcin { from { opacity: 0; visibility: visible; } to { opacity: 1; visibility: visible; } }
+.hero2-arc-track { position: relative; width: 100%; height: 100%; }
+.hero2-card {
+  position: absolute; top: 0; left: 0;
+  display: block;
+  width: 140px; height: 110px;
+  /* script.js turns this on only while a card is on-stage AND legible. Cards
+     that drift off keep their last offset-distance and park on the path's end
+     points, which sit inside the viewport above ~1560px wide — as links they
+     would be invisible click traps. */
+  pointer-events: none;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 14px; overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 25px 50px -12px rgba(14, 27, 44, .28);
+  transition: transform .3s ease;
+  opacity: 0; /* script.js drives per-card offset-distance + opacity */
+}
+/* fine pointers only — on touch :hover sticks after a tap, which would leave a
+   tapped card stuck at 1.35 and latch the drift at HOVER for the whole session */
+@media (hover: hover) and (pointer: fine) {
+  .hero2-card:hover { transform: scale(1.35); z-index: 50; }
+}
+.hero2-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+@media (max-width: 760px) {
+  .hero2-arc { transform: translateX(-50%) scale(.75); transform-origin: 50% 100%; top: auto; bottom: 6px; }
+}
+/* short desktop/laptop viewports: compress the composition so mac, intro
+   and the card arc all clear one screen (no scroll needed to see the arc) */
+@media (min-width: 761px) and (max-height: 849px) {
+  .hero2-stage { margin-top: 20px; }
+  .hero2-mac { --macScale: .9; transform-origin: 50% 100%; }
+  .hero2-marquee { top: 180px; } /* visual mac center with .9 scale, bottom origin */
+  /* was `top: calc(100% - 190px)`, which drove the cards straight across the
+     second line of the H1 — measured at 1440x680: five fully opaque cards over
+     the headline box, 28 of 54 sample points hitting a card instead of the
+     heading. Harmless-looking while they were inert divs; a click trap on the
+     headline once they became links. Pin the arc to the hero floor instead. */
+  .hero2-arc { top: auto; bottom: 10px; transform: translateX(-50%) scale(.85); transform-origin: 50% 100%; }
+}
+@media (max-height: 599px) {
+  .hero2-arc { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* visibility has to be restored here too, or the arc never appears at all */
+  .hero2-arc { opacity: 1; visibility: visible; animation: none; }
+}
+
+/* --- case v2 (band rhythm — pilot on golance.html) ---
+   Rules: one centered text column; alternating statement/image bands;
+   images on tinted panels at natural aspect (never cropped);
+   giant Next Project marquee as pagination. */
+.c2col { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+.case2-hero { padding: 92px 0 8px; }
+.case2-hero h1 {
+  font-size: clamp(31px, 4.4vw, 52px); line-height: 1.16;
+  letter-spacing: -0.028em; font-weight: 700; color: var(--ink);
+  text-wrap: balance; margin-top: 18px;
+}
+.case2-chips { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 30px; }
+.case2-chip {
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 17px; font-size: 14.5px; font-weight: 600; color: var(--body);
+  background: transparent; white-space: nowrap;
+}
+.case2-chip--year { margin-left: auto; }
+.case2-band { padding-top: 68px; }
+.case2-statement {
+  font-size: clamp(21px, 2.5vw, 27px); line-height: 1.48;
+  font-weight: 600; letter-spacing: -0.015em;
+  color: color-mix(in srgb, var(--ink) 88%, var(--body));
+}
+.case2-statement .accent { color: var(--accent); }
+.case2-sub { margin-top: 14px; font-size: 17px; line-height: 1.68; color: var(--body); }
+/* full-bleed tinted band, square corners. Deliberately NOT a rounded card:
+   a rounded panel stacked inside the browser window and around an already
+   rounded screenshot read as three nested boxes. The tint is a background
+   the screenshot sits on, so only the screenshot carries a frame. */
+.case2-imgband {
+  width: 100%; margin: 46px auto 0;
+  border-radius: 0; padding: clamp(22px, 4.5vw, 60px);
+  display: flex; justify-content: center;
+}
+.case2-imgband img {
+  width: 100%; max-width: 1060px; height: auto; display: block;
+  border-radius: 14px; box-shadow: 0 24px 48px -20px rgba(14, 27, 44, .22);
+}
+/* optional zoom affordance: wrap an imgband image in <a href="the same asset">
+   so dense artifacts (research diagrams, full screens) can be opened at full
+   size — essential on phones, where a 307px-wide band can't carry fine detail. */
+.case2-imgband a { display: block; width: 100%; max-width: 1060px; cursor: zoom-in; text-decoration: none; }
+.case2-imgband a img { max-width: 100%; }
+/* --- case-v2 GALLERY: several screens in one band, auto-advancing ---------
+   Use when the screens are variations of ONE idea (the same system on different
+   surfaces). When each image makes a different argument, give it its own band —
+   a carousel hides content, and on a portfolio an unseen screen is a wasted one.
+   That's why the dots, arrows and "n / total" count are always present: they
+   have to advertise that more exists.
+   Navigation is dots / arrows / swipe ONLY, never a click on the image — the
+   image keeps its tap-to-enlarge <a>. */
+.case2-gallery { display: block; position: relative; }
+/* Clip HORIZONTALLY only: the clip exists to hide the adjacent slides, which
+   sit entirely to the sides — vertically there is nothing to hide, and a plain
+   overflow:hidden was cutting off the slide image's drop shadow (it extends
+   ~52px below the image). `hidden` first is the fallback for engines without
+   overflow:clip; on modern ones x:clip + y:visible is a valid pair. */
+.c2g-viewport { overflow: hidden; overflow-x: clip; overflow-y: visible; }
+/* script.js sets the viewport's height to the ACTIVE slide's height — slides
+   differ in height, and without this the track holds the tallest slide's box,
+   leaving a dead gap between a shorter image and the dots. */
+.c2g-viewport { transition: height .55s cubic-bezier(.22, .61, .36, 1); }
+.c2g-track {
+  display: flex; list-style: none; margin: 0; padding: 0;
+  transition: transform .72s cubic-bezier(.22, .61, .36, 1);
+}
+.c2g-slide {
+  flex: 0 0 100%; display: flex; justify-content: center;
+  /* the outgoing slide drops back and dims while the incoming one rises into
+     place, so the change reads as depth rather than a flat filmstrip push */
+  opacity: .22; transform: scale(.92) translateY(22px);
+  transition: opacity .6s ease, transform .8s cubic-bezier(.22, .61, .36, 1);
+}
+.c2g-slide.is-active { opacity: 1; transform: none; }
+
+/* scope line above a .m-band, when the tiles span wider work than the case itself */
+.m-scope {
+  margin: 44px 0 11px; font-size: 12px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--mute);
+}
+
+.c2g-bar { display: flex; align-items: center; justify-content: center; margin-top: 26px; }
+.c2g-dots { display: flex; align-items: center; gap: 8px; }
+
+/* The active dot stretches into a bar and its accent fill sweeps across over
+   the slide's dwell — a visible countdown to the next slide. When the next dot
+   takes over it becomes the bar and starts its own sweep; this one shrinks back
+   to a dot. Duration comes from --c2g-dwell, which script.js sets per slide
+   (longer after a manual move), and .is-paused freezes the sweep in place. */
+.c2g-dot {
+  position: relative; overflow: hidden;
+  width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; cursor: pointer;
+  background: color-mix(in srgb, var(--ink) 30%, transparent);
+  transition: width .5s cubic-bezier(.22, .61, .36, 1), background .35s ease;
+}
+.c2g-dot:hover { background: color-mix(in srgb, var(--ink) 50%, transparent); }
+.c2g-dot.is-active { width: 34px; background: color-mix(in srgb, var(--ink) 22%, transparent); }
+.c2g-fill {
+  position: absolute; inset: 0; border-radius: inherit;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: left center;
+}
+.c2g-dot.is-active .c2g-fill { animation: c2gfill var(--c2g-dwell, 5500ms) linear forwards; }
+.case2-gallery.is-paused .c2g-fill { animation-play-state: paused; }
+@keyframes c2gfill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* arrows live in the band's side padding, clear of the 1060px image, so they
+   never sit on top of a screenshot. Below 1100px there's no room — swipe + dots
+   take over and the arrows are hidden. */
+.c2g-arrow {
+  position: absolute; top: 50%; margin-top: -23px; z-index: 2;
+  width: 46px; height: 46px; border-radius: 50%; border: 0; cursor: pointer;
+  display: none; place-items: center; color: var(--ink);
+  background: color-mix(in srgb, #fff 88%, transparent);
+  box-shadow: 0 10px 26px -12px rgba(14, 27, 44, .4);
+  transition: background .3s ease, transform .3s ease;
+}
+.c2g-arrow:hover { background: #fff; transform: scale(1.08); }
+.c2g-arrow svg { width: 19px; height: 19px; }
+.c2g-prev { left: clamp(8px, 2.4vw, 30px); }
+.c2g-next { right: clamp(8px, 2.4vw, 30px); }
+@media (min-width: 1100px) { .c2g-arrow { display: grid; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .c2g-track { transition: none; }
+  .c2g-viewport { transition: none; }
+  .c2g-slide { transition: none; opacity: 1; transform: none; }
+  .c2g-dot { transition: none; }
+  /* nothing auto-advances here, so the bar has no countdown to show — it just
+     marks the current slide */
+  .c2g-dot.is-active .c2g-fill { animation: none; transform: scaleX(1); }
+}
+
+/* --- .c2next: the next-project banner --------------------------------------
+   Replaces the giant marquee that used to scroll the words "Next Project —
+   Rogers ·" across the bottom of every case. It looked good and nobody could
+   tell it was a link: no thumbnail, no button, no border, just drifting type at
+   12% ink. This says what it is, shows where it goes, and looks pressable —
+   poster, label, title, and a filled arrow that moves under the cursor.
+
+   Thumbnails are `next-<slug>.webp`, built by ../next_thumbs.py: an 8:5 crop of
+   the same poster the homepage work card uses, so the promise here matches what
+   the visitor sees when they land. They are NOT the poster files themselves —
+   two of those are 700-950 KB Figma SVGs, absurd at 300px wide.
+
+   The whole banner is one <a>. Nothing inside may be a link (no nested
+   anchors); the "Next project" pill is a styled <span> — the label and the
+   arrow merged into one pressable-looking element (Temo's spec 2026-07-31:
+   title + company as the text, label+arrow combined "somewhere on the card";
+   the old bare arrow circle floated meaninglessly beside the copy on phones). */
+.c2next {
+  display: grid; grid-template-columns: minmax(0, 300px) 1fr;
+  align-items: center; gap: clamp(20px, 3vw, 40px);
+  width: min(100% - 48px, 1060px); margin: 104px auto 0;
+  padding: clamp(16px, 2vw, 22px);
+  border-radius: 26px; background: var(--band);
+  text-decoration: none; color: inherit;
+  transition: transform .5s cubic-bezier(.2, .65, .25, 1),
+              box-shadow .5s cubic-bezier(.2, .65, .25, 1);
+}
+.c2next:hover { transform: translateY(-4px); box-shadow: 0 34px 60px -34px rgba(14, 27, 44, .38); }
+.c2next-media { overflow: hidden; border-radius: 16px; aspect-ratio: 8 / 5; background: #fff; }
+.c2next-media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .7s cubic-bezier(.2, .65, .25, 1);
+}
+.c2next:hover .c2next-media img { transform: scale(1.06); }
+.c2next h2 {
+  margin: 0; font-size: clamp(19px, 2vw, 26px); line-height: 1.28;
+  letter-spacing: -0.02em; font-weight: 700; color: var(--ink); text-wrap: balance;
+}
+.c2next-meta { margin: 10px 0 0; font-size: 14px; color: var(--body); }
+.c2next-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin-top: 20px; padding: 12px 22px; border-radius: 999px;
+  background: var(--accent); color: #fff;
+  font-size: 14px; font-weight: 700; letter-spacing: .01em;
+  transition: background .35s ease;
+}
+.c2next-btn svg { width: 17px; height: 17px; transition: transform .45s cubic-bezier(.2, .65, .25, 1); }
+.c2next:hover .c2next-btn { background: color-mix(in srgb, var(--accent) 86%, var(--ink)); }
+.c2next:hover .c2next-btn svg { transform: translateX(4px); }
+@media (max-width: 820px) {
+  /* poster across the top, copy below, pill under the copy — no orphaned arrow */
+  .c2next { grid-template-columns: 1fr; gap: 18px; margin-top: 72px; }
+}
+@media (max-width: 560px) {
+  /* same rule as every other mobile CTA on the site: the button goes full width */
+  .c2next-btn { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .c2next, .c2next-media img, .c2next-btn, .c2next-btn svg { transition: none; }
+  .c2next:hover { transform: none; }
+  .c2next:hover .c2next-media img { transform: none; }
+  .c2next:hover .c2next-btn svg { transform: none; }
+}
+@media (max-width: 760px) {
+  .case2-hero { padding-top: 60px; }
+  .case2-chips { gap: 8px; }
+  .case2-chip { font-size: 13px; padding: 7px 13px; }
+  .case2-chip--year { margin-left: 0; }
+  .case2-band { padding-top: 52px; }
+  .case2-imgband { width: 100%; border-radius: 0; margin-top: 34px; }
+}
+/* --- mobile nav: slides away on scroll down, returns on scroll up (script.js) --- */
+@media (max-width: 760px) {
+  .nav { transition: transform .32s cubic-bezier(.32, .72, .35, 1); }
+  .nav.nav-hide { transform: translateY(-103%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav { transition: none; }
+}
+
+/* ---------- the console: title bar, typed body, logo dock ---------- */
+.ai-console {
+  margin: 52px 0 0;
+  background: #08090d; border: 1px solid rgba(255, 255, 255, .09); border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 44px 90px -42px rgba(0, 0, 0, .65), 0 0 90px -30px rgba(255, 116, 68, .22);
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+.ai-bar {
+  display: flex; align-items: center; gap: 7px; padding: 13px 20px;
+  background: rgba(255, 255, 255, .045); border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+.ai-bar i { width: 11.5px; height: 11.5px; border-radius: 50%; }
+.ai-bar i:nth-child(1) { background: #e6604d; } .ai-bar i:nth-child(2) { background: #eec22f; } .ai-bar i:nth-child(3) { background: #5fc26a; }
+.ai-bar em { margin-left: auto; font-style: normal; font-size: 12px; color: rgba(223, 229, 244, .48); letter-spacing: .04em; }
+.ai-bar em span { color: rgba(255, 178, 143, .9); }
+.ai-body { padding: 26px 30px 30px; min-height: 132px; }
+.ai-line { font-size: 16.5px; line-height: 1.75; color: #e8eef9; word-break: break-word; }
+.ai-ps { color: #ff8a5c; margin-right: 10px; font-weight: 700; }
+.ai-caret {
+  display: inline-block; width: 9px; height: 1.05em; margin-left: 2px;
+  background: #ff8a5c; vertical-align: text-bottom;
+  animation: ai-blink 1.05s steps(1) infinite;
+}
+@keyframes ai-blink { 50% { opacity: 0; } }
+.ai-out {
+  margin-top: 14px; font-size: 14.5px; line-height: 1.7; color: #7ce2a7;
+  opacity: 0; transform: translateY(4px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+.ai-out.show { opacity: 1; transform: none; }
+.ai-stack {
+  border-top: 1px solid rgba(255, 255, 255, .07); padding: 12px 20px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px;
+  font-size: 12px; letter-spacing: .02em;
+}
+.ai-slabel { color: rgba(223, 229, 244, .4); }
+.ai-sicon {
+  display: inline-flex; align-items: center; gap: 7px;
+  color: rgba(223, 229, 244, .72); opacity: .48;
+  transition: opacity .45s ease, color .45s ease;
+}
+.ai-sicon svg { width: 14px; height: 14px; flex: 0 0 auto; }
+.ai-sicon.on { opacity: 1; color: #ffb28f; }
+/* --- AI workflow v4 (hybrid: v1's title + HUD orb over v3's console) ---------
+   The v3 dark band and console are reused verbatim (.ai-console and friends);
+   this block only supplies the band itself and the head row. No cards below the
+   console — the console is the closing statement. */
+.ai {
+  position: relative; overflow: hidden;
+  /* the console is the last element and its own shadow reads as breathing room,
+     so the floor is shallower than the ceiling */
+  background: #0c0d12; padding: 104px 0 84px;
+}
+.ai::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(620px 360px at 14% 4%, rgba(255, 122, 74, .13), transparent 70%),
+    radial-gradient(680px 400px at 88% 96%, rgba(214, 92, 49, .10), transparent 72%);
+}
+.ai .wrap { position: relative; }
+
+/* The orb as a background instrument, masked so it reads as depth behind the section
+   rather than a second object competing with the title. The console (opaque #0a1224)
+   crosses its lower half — that overlap is the point: it layers the band rather than
+   dividing it into a title zone and a console zone. */
+.ai-orb {
+  /* fully inside the band on all four sides — bled off an edge it reads as cut off */
+  position: absolute; top: 6px; right: 16px;
+  width: 520px; max-width: 42%; pointer-events: none;
+  opacity: .55;
+  /* fade ONLY the outermost ring, so the instrument still reads as one whole disc.
+     A tighter mask cropped it into loose arcs that looked like stray noise. */
+  -webkit-mask-image: radial-gradient(closest-side, #000 64%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 64%, transparent 100%);
+}
+.ai-orb .orb2 { width: 100%; margin: 0; }
+
+/* .ai-bg's base alpha (.06) is tuned for a lighter surface; on this flat #0d1830
+   band it is invisible, so the grid is nudged up just enough to register as texture. */
+.ai .ai-bg { background-image: radial-gradient(rgba(255, 150, 107, .09) 1px, transparent 1px); }
+
+/* one full-width column, so the head and the console share both edges. A two-column
+   head (copy + orb) breaks that alignment — hence the orb being a background layer. */
+.ai-head .ai-sub { max-width: 52ch; }
+/* ⚠️ The body's min-height CANNOT go to 0: the outcome line is emptied between
+   prompts, so without a floor the body shrinks and grows on every cycle. The values
+   here and at 760px are the TALLEST state (prompt + outcome) at each breakpoint,
+   measured across every phone width — so nothing ever reflows. */
+@media (max-width: 1100px) {
+  .ai-orb { top: 16px; right: 8px; width: 400px; opacity: .45; }
+}
+@media (max-width: 880px) {
+  .ai { padding: 76px 0 78px; }
+  /* behind body copy at phone widths the orb's rings sit under the text and hurt
+     contrast; the console carries the section here */
+  .ai-orb { display: none; }
+  .ai-console { margin-top: 34px; }
+  .ai-body { padding: 22px 20px 24px; }
+}
+@media (max-width: 760px) {
+  /* Title bar drops to a bare "workflow.log". The rotating tool name pushed the bar
+     onto two lines on a phone, and it changed line count as the name changed — the
+     logo dock at the foot of the console already says which tools are in play, so the
+     name is redundant here. Desktop keeps it. */
+  .ai-bartool { display: none; }
+  /* ONE height for every prompt, sized to the WORST case, never to the common one.
+     Measured by cloning the body at each phone width and setting all four prompts:
+     at 320px "red-team this checkout…" wraps to THREE lines and needs 192px, while
+     360–430px need 167 — so the earlier 172px floor was correct at 375 and jumped on
+     a narrow phone. 212px reserves four prompt lines
+     plus two outcome lines, which also absorbs the transient extra line the caret
+     causes when it wraps past a full line mid-type. Deliberately taller than the
+     common case: blank space under the last output is what a real terminal looks
+     like, whereas a box that changes size every cycle reads as broken. */
+  .ai-body { min-height: 196px; }
+}
+
+/* ambient orb motion idles while the band is offscreen (script.js) */
+.ai.paused .o-ring1, .ai.paused .o-ring2, .ai.paused .o-ring3,
+.ai.paused .o-sweep, .ai.paused .o-ticks, .ai.paused .o-halo,
+.ai.paused .o-ping, .ai.paused .o-innerarc,
+.ai.paused .o-coreglow { animation-play-state: paused; }
+
+/* A phone-width screen on a full-bleed band. Without this cap the band's
+   `width:100%; max-width:1060px` blows a 360px design up to 1060 — which, at
+   height:auto, renders it ~3400px tall. Capped near its natural width it reads
+   as a phone standing next to the desktop work, and the zoom <a> still opens it
+   full size for anyone who wants to read the detail. The width is set near
+   real-world scale: a 360px phone beside a 1440px desktop design, shown at a
+   band width of 1060, works out to ~265px. */
+.case2-imgband--phone a,
+.case2-imgband--phone img { max-width: 280px; }
+
+/* --- .case2-imgband--fit: size a raster screen to its OWN resolution --------
+   Some case images come from a source that cannot be re-exported any bigger —
+   the 2024 deck's embedded bitmaps (see ../rogers_assets.py), where the widest
+   OneView screen is 1768px. Stretched to the band's full 1060px those land at
+   1.3-1.7x on a retina screen and read as "low quality", but the pixels are
+   fine: the fault is the display size, not the file. Shrinking the frame is
+   the entire fix — the same bitmap at 2x looks sharp.
+
+   Caps the displayed width at three things at once, whichever is smallest:
+     1. HALF the native pixel width          -> never drops below 2x on retina
+     2. a viewport-height budget x aspect    -> the whole screen is visible at
+        once, instead of one figure outgrowing the window
+     3. the band's usual 1060px maximum
+   Declare the source's own numbers on the zoom <a> (both unitless, so calc()
+   can multiply them):
+       style="--iw: 1768; --ar: 1.263"        native width px; width / height
+   In a .case2-gallery the vars go on EACH slide's <a> — every slide has its own
+   resolution. Slides stay centred, so differing widths don't shift the band.
+
+   Mobile is untouched by design: at 375px the band is already ~331px wide, so a
+   deck bitmap runs at 4-5x there and none of these caps bind. The 68vh budget
+   leaves room for the band's own padding, so image + band still clear a 900px
+   window — and a short 1440x800 laptop simply gets a smaller, still-sharp
+   figure rather than a scroll.
+   NOTE: vector sources (the .svg exports on tbc/golance) must NOT use this —
+   they have no native resolution to honour and would only come out smaller. */
+.case2-imgband--fit a {
+  max-width: min(1060px, calc(var(--iw) * .5px), calc(68vh * var(--ar)));
+}
+
+/* --- .c2win: two framed viewports onto ONE long page -----------------------
+   A full-page export can carry two separate arguments 800px apart. Shipping it
+   twice, cropped two ways, ships the file twice — a Figma SVG is 700 KB+ over
+   the wire. Instead each band frames its own region of the SAME src, so the
+   browser downloads it once and caches it for the second band.
+
+   This is NOT the aspect-fit cropping the band rules forbid. There, an image is
+   squashed into a fixed box and loses its edges. Here the window IS the frame:
+   its region is shown whole, at full band width, uncropped left-to-right, and
+   the zoom <a> still opens the entire page.
+
+   --w/--h = the visible region's size in source px; --y = its top offset. The
+   image keeps its own aspect and is pushed up by a percentage of the window's
+   height, so the whole thing scales with the column. */
+.c2win {
+  display: block; /* it's a <span> inside the zoom <a> — an inline box has no size */
+  position: relative; width: 100%; overflow: hidden;
+  aspect-ratio: var(--w) / var(--h);
+  border-radius: 14px; box-shadow: 0 24px 48px -20px rgba(14, 27, 44, .22);
+}
+.c2win img {
+  position: absolute; left: 0; top: calc(-100% * var(--y) / var(--h));
+  width: 100%; height: auto; display: block;
+  border-radius: 0; box-shadow: none;
+}
+
+/* --- .c2mos: a photo mosaic, for the trip band ------------------------------
+   A carousel was wrong here. The gallery exists for screens that make the SAME
+   argument one at a time; these photos make one argument TOGETHER — I was in
+   the room, in that building, in that valley — and hiding three quarters of
+   that behind dots weakens it. A mosaic says it in a single glance.
+
+   The lead photo keeps height:auto, so the shot with people in it is never
+   cropped. Only the three supporting frames take object-fit:cover, which is the
+   deliberate exception to the band rule: that rule protects SCREENSHOTS, where
+   a cropped edge loses information, and a photograph trimmed to a common
+   rectangle loses nothing. Every frame still opens full-size via its own zoom
+   anchor, so the crop is presentational only.
+
+   Sizing note: the supporting frames render ~340px wide on desktop, so their
+   srcset `sizes` must say so — inheriting the band's 1060px would pull the
+   full-size file for a thumbnail and undo the responsive work. */
+/* 760px, not the band's usual 1060: these are photographs, not the work. Held
+   to the text column's width they read as a note in the margin of the story
+   rather than a showcase, which is the right hierarchy next to the product
+   screens — and the lead shot is a soft video still that falls apart when it is
+   enlarged past about 800px. */
+.c2mos { width: 100%; max-width: 760px; display: grid; gap: 12px;
+         grid-template-columns: repeat(3, 1fr); }
+.c2mos > a {
+  display: block; width: 100%; max-width: none; overflow: hidden;
+  border-radius: 14px; box-shadow: 0 24px 48px -20px rgba(14, 27, 44, .22);
+  cursor: zoom-in; text-decoration: none;
+}
+/* the frame carries the rounding and the shadow, so the image inside drops the
+   copies it inherits from .case2-imgband img */
+.c2mos > a > img {
+  display: block; width: 100%; height: 100%; max-width: none;
+  object-fit: cover; border-radius: 0; box-shadow: none;
+  transition: transform .7s cubic-bezier(.2, .65, .25, 1);
+}
+.c2mos > a:hover > img { transform: scale(1.035); }
+.c2mos-main { grid-column: 1 / -1; }
+.c2mos-main > img { height: auto; }            /* the lead photo is never cropped */
+.c2mos > a:not(.c2mos-main) { aspect-ratio: 3 / 2; }
+@media (max-width: 700px) {
+  .c2mos { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  /* An odd number of supporting frames leaves a hole in a 2-up grid, so the
+     last one spans instead of sitting beside empty space. The lead photo takes
+     a whole row by itself, so the supporting frames start at child 2 and a
+     lone last one always lands on an EVEN index (2, 4, 6...). */
+  .c2mos > a:last-child:nth-child(even) { grid-column: 1 / -1; aspect-ratio: 2 / 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .c2mos > a > img, .c2mos > a:hover > img { transition: none; transform: none; }
+}
+
+/* --- .c2vid: click-to-load video, no third party until asked ---------------
+   The band ships a static thumbnail and a play button. YouTube's player — its
+   script, its cookies — loads only when someone presses play, and the iframe
+   then replaces the button in place so playback starts exactly where the
+   thumbnail was. Embedding the iframe up front would load ~1 MB and set
+   third-party cookies on every visitor who never watches. */
+.case2-imgband--stack { flex-direction: column; align-items: center; }
+.c2vid { position: relative; width: 100%; max-width: 1060px; }
+.c2vid-btn {
+  display: block; position: relative; width: 100%; aspect-ratio: 16 / 9;
+  padding: 0; border: 0; background: none; cursor: pointer; overflow: hidden;
+  border-radius: 14px; box-shadow: 0 24px 48px -20px rgba(14, 27, 44, .22);
+}
+.c2vid-btn img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  border-radius: 0; box-shadow: none;
+  transition: transform .6s cubic-bezier(.22, .61, .36, 1);
+}
+.c2vid-btn:hover img, .c2vid-btn:focus-visible img { transform: scale(1.03); }
+/* GLASS play button. A solid white puck reads as a stock overlay dropped on the
+   image; this one is part of it — it refracts the poster behind it through
+   backdrop-filter, catches a light edge along its top, and sits inside a thin
+   halo that breathes outward on hover. Keep the two rings faint: the triangle,
+   not the chrome, has to stay the brightest thing in the circle. */
+.c2vid-play {
+  position: absolute; inset: 0; margin: auto;
+  width: 72px; height: 72px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: linear-gradient(150deg, rgba(255,255,255,.30), rgba(255,255,255,.10) 62%);
+  -webkit-backdrop-filter: blur(15px) saturate(175%);
+  backdrop-filter: blur(15px) saturate(175%);
+  border: 1px solid rgba(255, 255, 255, .40);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, .60),
+    inset 0 -18px 30px rgba(255, 255, 255, .05),
+    0 20px 48px -14px rgba(0, 0, 0, .60);
+  transition: transform .4s cubic-bezier(.22, .61, .36, 1),
+              background .35s ease, border-color .35s ease;
+}
+/* the halo — a second, wider ring that expands and fades as you approach */
+.c2vid-play::before {
+  content: ""; position: absolute; inset: -12px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .20);
+  transition: transform .55s cubic-bezier(.22, .61, .36, 1), opacity .55s ease;
+}
+.c2vid-btn:hover .c2vid-play, .c2vid-btn:focus-visible .c2vid-play {
+  transform: scale(1.07);
+  background: linear-gradient(150deg, rgba(255,255,255,.42), rgba(255,255,255,.16) 62%);
+  border-color: rgba(255, 255, 255, .58);
+}
+.c2vid-btn:hover .c2vid-play::before, .c2vid-btn:focus-visible .c2vid-play::before {
+  transform: scale(1.14); opacity: .45;
+}
+/* NO margin nudge. The path is M8.5 5.8v12.4L19 12z in a 24x24 box: its
+   bounding box spans x 8.5-19, centred on 13.75 — already 1.75 units right of
+   the box centre — which puts its CENTROID (a triangle's centre of mass sits a
+   third of the way from base to apex, x=12) exactly on centre. The optical
+   correction is baked into the path. A margin-left on top applied it twice and
+   the triangle read as shoved right. */
+.c2vid-play svg {
+  width: 26px; height: 26px; fill: #fff;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .45));
+}
+.c2vid-frame {
+  display: block; width: 100%; aspect-ratio: 16 / 9; border: 0;
+  border-radius: 14px; box-shadow: 0 24px 48px -20px rgba(14, 27, 44, .22);
+}
+.c2vid-note {
+  margin-top: 15px; text-align: center;
+  font-size: 13.5px; line-height: 1.6; color: var(--mute);
+}
+.c2vid-note a { color: var(--body); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 560px) {
+  /* the glass puck is sized for a 1060px band; on a ~330px one it would eat a
+     third of the poster and sit on top of the headline. 60/62px keeps it a
+     comfortable tap target (>44px) at ~18-23% of the frame. */
+  .c2vid-play { width: 54px; height: 54px; }
+  .c2vid-play svg { width: 20px; height: 20px; }
+  .c2vid-play::before, .reel-play::before { inset: -9px; }
+  .reel-play { width: 54px; height: 54px; margin: -27px 0 0 -27px; }
+  .reel-play svg { width: 20px; height: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .c2vid-btn img, .c2vid-play, .c2vid-play::before { transition: none; }
+  .c2vid-btn:hover img, .c2vid-btn:focus-visible img { transform: none; }
+  .c2vid-btn:hover .c2vid-play, .c2vid-btn:focus-visible .c2vid-play { transform: none; }
+  .c2vid-btn:hover .c2vid-play::before, .c2vid-btn:focus-visible .c2vid-play::before { transform: none; }
+}
+
+/* --- .c2quotes: recognition set in the page's own type ----------------------
+   This band used to be a screenshot of EPAM's recognition UI dropped onto the
+   tint: a white card, in someone else's typeface, and the only image on the
+   page that wasn't Temo's own work. Only the medals survive as images
+   (transparent WebP, cut by medal() in novocure_assets.py) — the words are page
+   text now, so they set in Plus Jakarta Sans, wrap at any width, can be
+   selected and translated, and cost ~26 KB instead of 83.
+
+   Deliberately NOT a card. The quotes sit directly on the band's tint; a white
+   panel is what made the old version read as pasted on rather than part of the
+   page. The medal's transparent circle is doing the same job — on a card it
+   would have needed a white square behind it. */
+.c2quotes {
+  width: 100%; max-width: 1060px; margin: 0; padding: 0; list-style: none;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(30px, 4vw, 56px);
+}
+.c2quote { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: start; }
+/* .case2-imgband img (0,1,1) sets width:100% + a 14px radius + a shadow, and it
+   outranks a lone .c2quote-medal (0,1,0) — the medal rendered 200px wide on a
+   white rounded card. Qualify the selector and undo all three. */
+.c2quotes .c2quote-medal {
+  width: 74px; height: 74px; max-width: none; display: block;
+  border-radius: 0; box-shadow: none;   /* the alpha circle is the shape */
+}
+.c2quote blockquote {
+  margin: 0; font-size: clamp(16.5px, 1.4vw, 18.5px); line-height: 1.62;
+  font-weight: 500; /* a shade heavier than body copy — it is speech, not narration */
+  color: color-mix(in srgb, var(--ink) 86%, var(--body));
+}
+.c2quote-src {
+  margin: 12px 0 0; font-size: 12.5px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}
+@media (max-width: 780px) {
+  .c2quotes { grid-template-columns: 1fr; }
+  .c2quote { gap: 18px; }
+  .c2quotes .c2quote-medal { width: 62px; height: 62px; }
+}
+
+/* --- .c2dev: one product, two breakpoints, ONE figure ----------------------
+   For when a desktop screen and its phone counterpart are the SAME screen. As
+   two separate bands they read as two unrelated images and the second one feels
+   redundant; composed together they read as one responsive product, which is an
+   argument neither makes alone.
+
+   The frames are deliberately minimal — a thin bezel, a laptop foot, no brand
+   marks and no photoreal chrome. This site's system is flat ink-on-linen, the
+   homepage hero already owns a literal Macintosh, and a glossy MacBook here
+   would add a third device language while spending pixels on decoration instead
+   of on the UI. The frame's only job is to say "same product, two sizes".
+
+   Both devices keep their own zoom <a>, so each screen still opens full size. */
+.c2dev { position: relative; width: 100%; max-width: 1060px; padding-bottom: 30px; }
+/* NB: no `width` here — .c2dev a (0,1,1) would outrank .c2dev-lap / .c2dev-phone
+   (0,1,0) and collapse both devices. Widths live on the compound selectors. */
+.c2dev a { display: block; max-width: none; cursor: zoom-in; text-decoration: none; }
+.c2dev img { width: 100%; max-width: none; height: auto; display: block; border-radius: 0; box-shadow: none; }
+.c2dev-screen {
+  display: block; overflow: hidden; background: #131c2e;
+  border: 9px solid #131c2e;
+}
+
+/* laptop: bezel + a shallow foot that widens past the lid, the two shapes that
+   read as "laptop" without drawing one */
+.c2dev .c2dev-lap { position: relative; width: 87%; }
+.c2dev-lap .c2dev-screen {
+  border-radius: 13px;
+  box-shadow: 0 34px 64px -26px rgba(14, 27, 44, .45);
+}
+.c2dev-lap::after {
+  content: ""; position: absolute; left: -6.5%; width: 113%; bottom: -13px; height: 13px;
+  background: linear-gradient(#dfe5ed, #c2ccda);
+  border-radius: 0 0 11px 11px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85), 0 12px 20px -10px rgba(14, 27, 44, .35);
+}
+
+/* phone: overlaps the lid's bottom-right corner and hangs below the foot, the
+   standard way of saying "and it works here too" */
+.c2dev .c2dev-phone { position: absolute; right: 0; bottom: 0; width: 19.5%; z-index: 2; }
+.c2dev-phone .c2dev-screen {
+  border-width: 6px; border-radius: 26px;
+  box-shadow: 0 26px 44px -16px rgba(14, 27, 44, .55);
+}
+@media (max-width: 760px) {
+  /* a 19.5% phone on a ~330px band is 64px — unreadable. Give it more of the
+     frame and pull the lid in to keep the overlap. */
+  .c2dev .c2dev-lap { width: 80%; }
+  .c2dev .c2dev-phone { width: 26%; }
+  .c2dev-phone .c2dev-screen { border-width: 4px; border-radius: 17px; }
+  .c2dev-lap .c2dev-screen { border-width: 6px; border-radius: 9px; }
+  .c2dev-lap::after { height: 9px; bottom: -9px; }
+}
+
+/* --- .c2trio: three screens, one product, ONE band --------------------------
+   The Novocure cover. Its three core surfaces used to rotate in a gallery,
+   which meant two of them were always hidden behind dots — and each screen,
+   stretched to the band's full 1060px, put dense clinical UI at a size where
+   its type read as soft. Composed as a product trio the screens land together
+   in one glance, and each renders SMALLER than its source, so they read sharp.
+
+   Same minimal frame language as .c2dev above (thin bezel + foot, no photoreal
+   chrome — the reasoning there applies here doubly, with three devices).
+   The lead surface sits front and centre; the two supporting ones sit behind
+   it, raised, partly overlapped — hierarchy, not a filmstrip.
+
+   Every screen is WINDOWED to 16:10 from the top (a laptop's own shape;
+   headers carry these UIs' identity, so the bottom is what the crop spends).
+   Each laptop keeps its own zoom <a> to the FULL uncropped screen — same
+   contract as .c2win: the crop is presentational only. */
+.c2trio { position: relative; width: 100%; max-width: 1060px; padding-bottom: 13px; }
+.c2trio a { display: block; max-width: none; cursor: zoom-in; text-decoration: none; }
+.c2trio img { width: 100%; max-width: none; height: auto; display: block; border-radius: 0; box-shadow: none; }
+.c2trio .c2dev-screen { aspect-ratio: 16 / 10; }
+/* same trap as .c2dev (see its NB): .case2-imgband a (0,1,1) sets width:100%
+   and outranks a lone class (0,1,0) — the widths must live on compounds */
+.c2trio .c2trio-main { position: relative; width: 54%; margin: 0 auto; z-index: 3; }
+.c2trio .c2trio-side { position: absolute; bottom: 12%; width: 38%; z-index: 1; }
+.c2trio .c2trio-left { left: 0; }
+.c2trio .c2trio-right { right: 0; }
+/* the supporting laptops are further from the "camera": a tighter, dimmer
+   shadow keeps them planted without competing with the lead's */
+.c2trio-side .c2dev-screen { box-shadow: 0 22px 40px -22px rgba(14, 27, 44, .38); }
+/* .c2trio--cards — the SHIPPED variant (Temo's pick, 2026-08-01): only the
+   LEAD gets a laptop; the sides are plain rounded screens (the band's own
+   screenshot language, .case2-imgband img). One device says "the product",
+   the flat cards say "and there is more of it" without three bezels
+   competing. Dropping the class brings the three-laptop version back. */
+.c2trio--cards .c2trio-side .c2dev-screen {
+  border: 0; background: transparent; border-radius: 14px;
+  box-shadow: 0 20px 42px -20px rgba(14, 27, 44, .30);
+}
+.c2trio--cards .c2trio-side.c2dev-lap::after { display: none; }
+@media (max-width: 760px) {
+  /* same trim as .c2dev at phone size; the sides give the lead a little more
+     of the band, and every screen still opens full size via its zoom <a> */
+  .c2trio .c2trio-main { width: 60%; }
+  .c2trio .c2trio-side { width: 34%; }
+  .c2trio .c2dev-screen { border-width: 5px; border-radius: 8px; }
+  .c2trio .c2dev-lap::after { height: 8px; bottom: -8px; border-radius: 0 0 8px 8px; }
+  .c2trio { padding-bottom: 8px; }
+}
+
+
+/* ============================================================
+   KINETIK — additions on top of the portfolio system
+   (hero, services, process steps, coverage, start-project form)
+   ============================================================ */
+
+/* --- nav wordmark --- */
+.nav-logo { display: block; height: 13px; width: auto; }
+.nav-name { display: inline-flex; align-items: center; }
+.nav-links .btn { box-shadow: none; }
+
+/* --- hero --- */
+.khero { position: relative; overflow: hidden; padding: clamp(44px, 8vh, 88px) 0 0; }
+.khero-inner { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.khero-badge {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--mute); border: 1px solid var(--line); border-radius: var(--r-pill);
+  padding: 9px 16px; margin-bottom: clamp(30px, 5.5vh, 52px);
+}
+.khero-pulse {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 0 0 rgba(255,106,61,.55); animation: kpulse 2.2s ease-out infinite;
+}
+@keyframes kpulse {
+  70% { box-shadow: 0 0 0 10px rgba(255,106,61,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,106,61,0); }
+}
+.khero-mark { display: flex; align-items: stretch; gap: clamp(14px, 2.4vw, 28px); width: min(860px, 86%); }
+.khero-wordmark {
+  display: block; width: 100%; height: auto; min-width: 0;
+  /* negative insets: the sweep must never clip the glyphs' AA edge */
+  clip-path: inset(-2% 101% -2% -1%);
+  animation: ksweep .95s cubic-bezier(.77,0,.18,1) 1.05s forwards;
+}
+@keyframes ksweep { to { clip-path: inset(-2% -1% -2% -1%); } }
+/* three motion bars — the wordmark's center-E gesture, used as a speed trail */
+.khero-bars { display: flex; flex-direction: column; justify-content: space-between; padding: 2% 0; width: clamp(30px, 5.4vw, 58px); flex: none; }
+.khero-bars i {
+  display: block; height: 22%; border-radius: 2px; background: var(--accent);
+  align-self: flex-end; transform: translateX(-160%); opacity: 0;
+  animation: kbar .55s cubic-bezier(.2,.7,.2,1) forwards;
+}
+.khero-bars i:nth-child(1) { width: 58%;  animation-delay: .55s; }
+.khero-bars i:nth-child(2) { width: 100%; animation-delay: .68s; }
+.khero-bars i:nth-child(3) { width: 76%;  animation-delay: .81s; }
+@keyframes kbar { to { transform: none; opacity: 1; } }
+.khero-title { margin-top: clamp(32px, 6vh, 56px); font-size: clamp(30px, 4.6vw, 54px); line-height: 1.08; letter-spacing: -0.03em; }
+.khero-sub { max-width: 600px; margin-top: 16px; font-size: clamp(16px, 1.6vw, 18.5px); }
+.khero .hero-cta { margin-top: 32px; }
+
+/* --- hero services marquee (giant ghost type, same trick as the old hero) --- */
+.khero-marquee { position: relative; margin-top: clamp(40px, 7vh, 76px); overflow: hidden; }
+.khero-marquee::before, .khero-marquee::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: min(200px, 18vw); z-index: 2; pointer-events: none;
+}
+.khero-marquee::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.khero-marquee::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.khero-mq-track { display: flex; width: max-content; animation: h2scroll 130s linear infinite; }
+.khero-mq-track ul { display: flex; list-style: none; margin: 0; padding: 0; }
+.khero-mq-track li {
+  white-space: nowrap; padding-left: .38em;
+  font-size: clamp(54px, 9vw, 104px); font-weight: 600; line-height: 1.35;
+  letter-spacing: -0.045em;
+  color: color-mix(in srgb, var(--ink) 6.5%, transparent);
+}
+
+/* --- services --- */
+.services { padding: 96px 0 36px; }
+.svc-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; margin-top: 44px; }
+.svc {
+  grid-column: span 2; display: flex; flex-direction: column; gap: 10px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: 30px 28px 26px;
+  transition: transform .45s cubic-bezier(.2,.65,.25,1), border-color .45s ease;
+}
+.svc:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.svc-wide { grid-column: span 3; }
+.svc-type { order: -1; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--accent); }
+.svc-name { font-size: 26px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.svc-name::after { content: ""; display: block; width: 34px; height: 4px; border-radius: 2px; background: var(--accent); margin-top: 10px; }
+.svc-desc { font-size: 15.5px; line-height: 1.55; }
+.svc-chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin-top: auto; padding-top: 10px; }
+.svc-chips li { font-size: 12.5px; font-weight: 600; color: var(--mute); border: 1px solid var(--line); padding: 5px 11px; border-radius: var(--r-pill); }
+@media (max-width: 980px) { .svc, .svc-wide { grid-column: span 3; } }
+@media (max-width: 640px) { .svc, .svc-wide { grid-column: span 6; } .services { padding-top: 72px; } }
+
+/* --- process steps (inside the dark band, above the console) --- */
+.prc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 52px; }
+.prc { border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.03); border-radius: var(--r-md); padding: 22px 20px 20px; }
+.prc-num { font-size: 13px; font-weight: 800; color: #ff8a5c; letter-spacing: .08em; }
+.prc-name { font-size: 18px; font-weight: 800; color: #fff; margin-top: 8px; }
+.prc-desc { font-size: 14px; color: rgba(255,255,255,.6); margin-top: 6px; line-height: 1.5; }
+@media (max-width: 900px) { .prc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .prc-grid { grid-template-columns: 1fr; } }
+
+/* --- coverage --- */
+.coverage { padding: 44px 0 90px; }
+.cov-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
+.cov { background: var(--band); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px 26px; }
+.cov-name { font-weight: 800; color: var(--ink); font-size: 19px; letter-spacing: -0.01em; }
+.cov-desc { margin-top: 8px; font-size: 15px; line-height: 1.55; }
+@media (max-width: 860px) { .cov-grid { grid-template-columns: 1fr; } }
+
+/* --- start-project form --- */
+.cform {
+  margin-top: 40px; max-width: 760px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: 30px 28px; display: flex; flex-direction: column; gap: 18px;
+}
+.cform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.cfield { display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; font-weight: 700; color: var(--ink); letter-spacing: .02em; }
+.cfield input, .cfield select, .cfield textarea {
+  font: inherit; font-weight: 500; color: var(--ink);
+  background: color-mix(in srgb, var(--bg) 55%, var(--surface));
+  border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  outline: none; transition: border-color .25s ease, box-shadow .25s ease;
+}
+.cfield input::placeholder, .cfield textarea::placeholder { color: var(--mute); opacity: .75; font-weight: 400; }
+.cfield input:focus, .cfield select:focus, .cfield textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,106,61,.18); }
+.cfield textarea { resize: vertical; min-height: 104px; }
+.cform-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.cform .btn { border: 0; cursor: pointer; font-family: inherit; }
+.cform-note { font-size: 13.5px; color: var(--mute); max-width: 380px; line-height: 1.5; }
+.cform-note a { color: var(--accent); text-decoration: none; }
+.cform-note a:hover { text-decoration: underline; }
+@media (max-width: 640px) {
+  .cform { padding: 22px 18px; }
+  .cform-row { grid-template-columns: 1fr; }
+  .cform .btn { width: 100%; justify-content: center; }
+}
+
+/* shimmer on the hero accent word — motion, literally */
+.khero-title .accent {
+  background: linear-gradient(100deg, #ff6a3d 20%, #ffa07a 40%, #ff6a3d 60%);
+  background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 7s ease-in-out infinite;
+}
+
+/* --- footer founder credit --- */
+.footer-founder { color: var(--accent-ink); text-decoration: none; }
+.footer-founder:hover { text-decoration: underline; }
+
+/* --- motion off switch for the new pieces --- */
+@media (prefers-reduced-motion: reduce) {
+  .khero-wordmark { animation: none; clip-path: none; }
+  .khero-bars i { animation: none; transform: none; opacity: 1; }
+  .khero-pulse { animation: none; }
+  .khero-mq-track { animation: none; }
+  .khero-title .accent { animation: none; }
+}
