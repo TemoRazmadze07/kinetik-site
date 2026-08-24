@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <script>
 // Must run before the browser restores scroll: always start at the top.
@@ -47,7 +47,7 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
        v1 hero (showreel layout) lives in git history; its CSS/JS stay in place, unused. -->
   <section class="khero">
     <div class="wrap khero-inner">
-      <p class="khero-kicker reveal">Digital product studio &middot; Poland &amp; remote</p>
+      <p class="khero-kicker reveal">Digital product studio &middot; Georgia / Poland</p>
       <div class="khero-mark reveal d1">
         <!-- ghost services type: a BACKGROUND layer centred on the wordmark and
              bleeding the full viewport width, same treatment as the portfolio's
@@ -62,9 +62,11 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
             </ul>
           </div>
         </div>
-        <!-- The portfolio's handwritten hello, written over the wordmark: same
-             Dancing Script + stroke-mask trick — the white mask stroke traces the
-             pen route and reveals the text beneath, writing in the real font. -->
+        <!-- The hero object IS the portfolio's handwritten hello (Temo: the brand
+             wordmark lives in the nav; "brand itself is not so important" here).
+             Same Dancing Script + stroke-mask trick at the portfolio's exact
+             timings — the white mask stroke traces the pen route and reveals
+             the text beneath, writing in the real font. -->
         <svg class="khero-hello" viewBox="22 0 96 58" width="96" height="58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <mask id="helloMask" maskUnits="userSpaceOnUse" x="0" y="0" width="150" height="70">
@@ -74,8 +76,6 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
           <text class="hh-text" x="66" y="48" text-anchor="middle" mask="url(#helloMask)">hello</text>
           <circle class="hh-dot" cx="112" cy="45" r="2.6" fill="#36f5a2"/>
         </svg>
-        <span class="khero-bars" aria-hidden="true"><i></i><i></i><i></i></span>
-        <img class="khero-wordmark" src="assets/kinetik-wordmark-white.svg" alt="KINETIK" width="999" height="95" fetchpriority="high">
       </div>
       <h1 class="khero-title reveal d1">Digital products that <span class="accent">move</span> people.</h1>
       <p class="khero-sub reveal d2">We design and build websites, platforms and digital services that are clear, accessible and built to perform.</p>
@@ -764,7 +764,7 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     <div class="wrap">
       <p class="kicker reveal"><span class="kbar"></span>Coverage</p>
       <h2 class="section-title reveal">Where we <span class="accent">work</span></h2>
-      <p class="section-sub reveal">A Poland-based studio that works remotely — with roots in Georgia.</p>
+      <p class="section-sub reveal">A studio between Georgia and Poland — working remotely with clients anywhere.</p>
       <div class="cov-grid">
         <div class="cov reveal"><p class="cov-name">Poland &amp; EU</p><p class="cov-desc">Based in Wrocław — workshops and on-site collaboration across the EU.</p></div>
         <div class="cov reveal d1"><p class="cov-name">Remote by default</p><p class="cov-desc">Brief, design reviews, launch — everything runs over a call.</p></div>

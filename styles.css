@@ -1789,31 +1789,10 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .nav-links .btn { box-shadow: none; }
 
 /* --- hero --- */
-.khero { position: relative; overflow: hidden; padding: clamp(64px, 11vh, 128px) 0 clamp(56px, 9vh, 104px); }
+.khero { position: relative; overflow: hidden; padding: clamp(48px, 8vh, 88px) 0 clamp(52px, 8vh, 92px); }
 .khero-inner { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.khero-mark { position: relative; display: flex; align-items: stretch; gap: clamp(14px, 2.4vw, 28px); width: min(860px, 86%); }
-/* the ghost band is absolutely positioned, so the mark's own parts need an
-   explicit layer or they would paint underneath it */
-.khero-bars, .khero-wordmark { position: relative; z-index: 1; }
-.khero-wordmark {
-  display: block; width: 100%; height: auto; min-width: 0;
-  /* negative insets: the sweep must never clip the glyphs' AA edge */
-  clip-path: inset(-2% 101% -2% -1%);
-  animation: ksweep .95s cubic-bezier(.77,0,.18,1) 1.05s forwards;
-}
-@keyframes ksweep { to { clip-path: inset(-2% -1% -2% -1%); } }
-/* three motion bars — the wordmark's center-E gesture, used as a speed trail */
-.khero-bars { display: flex; flex-direction: column; justify-content: space-between; padding: 2% 0; width: clamp(30px, 5.4vw, 58px); flex: none; }
-.khero-bars i {
-  display: block; height: 22%; border-radius: 2px; background: var(--accent);
-  align-self: flex-end; transform: translateX(-160%); opacity: 0;
-  animation: kbar .55s cubic-bezier(.2,.7,.2,1) forwards;
-}
-.khero-bars i:nth-child(1) { width: 58%;  animation-delay: .55s; }
-.khero-bars i:nth-child(2) { width: 100%; animation-delay: .68s; }
-.khero-bars i:nth-child(3) { width: 76%;  animation-delay: .81s; }
-@keyframes kbar { to { transform: none; opacity: 1; } }
-.khero-title { margin-top: clamp(32px, 6vh, 56px); font-size: clamp(30px, 4.6vw, 54px); line-height: 1.08; letter-spacing: -0.03em; }
+.khero-mark { position: relative; display: flex; justify-content: center; width: 100%; }
+.khero-title { margin-top: clamp(26px, 4.5vh, 40px); font-size: clamp(30px, 4.6vw, 54px); line-height: 1.08; letter-spacing: -0.03em; }
 .khero-sub { max-width: 600px; margin-top: 16px; font-size: clamp(16px, 1.6vw, 18.5px); }
 .khero .hero-cta { margin-top: 32px; }
 
@@ -1915,16 +1894,16 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 /* --- hero kicker (replaces the removed availability badge) --- */
 .khero-kicker {
   font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--mute); margin-bottom: clamp(46px, 6vh, 58px);
+  color: var(--mute); margin-bottom: clamp(26px, 4vh, 38px);
 }
 
 /* --- handwritten hello: the portfolio's signature, over the wordmark.
        Reuses the portfolio's stroke-mask recipe (see .hero2-hello) with
        timings that wait for the wordmark sweep (.95s at 1.05s) to land. --- */
 .khero-hello {
-  position: absolute; z-index: 2;
-  top: clamp(-46px, -3.2vw, -34px); right: 3%;
-  width: clamp(88px, 10vw, 118px); height: auto; overflow: visible;
+  /* the hero object itself — in flow, over the ghost band */
+  position: relative; z-index: 1; display: block;
+  width: clamp(190px, 24vw, 270px); height: auto; overflow: visible;
   transform: rotate(-5deg);
 }
 .khero-hello .hh-text {
@@ -1935,9 +1914,10 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   fill: none; stroke: #fff; stroke-width: 10;
   stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 1; stroke-dashoffset: 1; /* pathLength="1" on the path */
-  animation: h2draw 1.6s cubic-bezier(.4, .05, .55, .95) 2.1s forwards;
+  /* the portfolio's exact write timing */
+  animation: h2draw 1.6s cubic-bezier(.4, .05, .55, .95) 1.15s forwards;
 }
-.khero-hello .hh-dot { opacity: 0; animation: h2fade .15s ease-out 3.8s forwards; }
+.khero-hello .hh-dot { opacity: 0; animation: h2fade .15s ease-out 2.85s forwards; }
 
 /* --- trust strip founder line --- */
 .trust .trust-label { text-align: center; margin-bottom: 4px; }
@@ -1957,8 +1937,6 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 
 /* --- motion off switch for the new pieces --- */
 @media (prefers-reduced-motion: reduce) {
-  .khero-wordmark { animation: none; clip-path: none; }
-  .khero-bars i { animation: none; transform: none; opacity: 1; }
   .khero-marquee { opacity: 1; animation: none; }
   .khero-mq-track { animation: none; }
   .khero-hello .hh-mask { animation: none; stroke-dashoffset: 0; }
