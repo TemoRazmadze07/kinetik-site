@@ -600,8 +600,13 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .marquee-track { animation: none; flex-wrap: wrap; white-space: normal; }
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee-track { animation: none; flex-wrap: wrap; white-space: normal; justify-content: center; }
+  /* static fallback shows ONE set: hide the 3 loop copies (8 logos per set) */
+  .marquee-track span:nth-child(n+9) { display: none; }
+  .marquee-track span { margin: 0 26px 10px; }
   .t-row { animation: none; flex-wrap: wrap; width: auto; }
+  .t-row > [aria-hidden="true"] { display: none; }
   .t-photo-img, .t-photo:hover .t-photo-img { transform: none; transition: none; }
   .card-img img, .card.in .card-img img { transform: none; transition: none; }
   .btn, .card, .t-card, .mock-window { transition: none; }
