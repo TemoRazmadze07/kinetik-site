@@ -504,14 +504,14 @@
   // Illustrative briefs → the package that answers each. Deliberately generic:
   // these are the kinds of businesses KINETIK is built for, not client claims.
   const PAIRS = [
-    ["a café with no site — the menu lives in phone calls",
-     "→ Start: one page, menu, map, booking. Live in days.", "Start", ["figma", "claude"]],
-    ["a clinic site from 2015 that falls apart on phones",
-     "→ Velocity: rebuilt mobile-first, same address.", "Velocity", ["figma", "claude", "gpt"]],
-    ["a shop ready to sell online for the first time",
-     "→ Commerce: store, payments, delivery.", "Commerce", ["claude", "lovable"]],
-    ["a growing team that needs the site to just keep working",
-     "→ Motion + Care: full site, then monthly momentum.", "Motion + Care", ["figma", "claude", "gemini"]]
+    ["a claims portal that agents fight with every day",
+     "→ Product & UX: research, rebuilt flows, prototype.", "Product & UX", ["figma", "claude"]],
+    ["a public site that fails its WCAG audit",
+     "→ Accessibility: audit, fixes, AA from the wireframe.", "Accessibility", ["claude", "gpt"]],
+    ["three products, three different button styles",
+     "→ Design system: one foundation, every team aligned.", "Design system", ["figma", "claude", "gemini"]],
+    ["an idea that needs to become a working product",
+     "→ Design + build: from concept to launch.", "Design + build", ["figma", "claude", "lovable"]]
   ];
   const dock = {};
   document.querySelectorAll("#process .ai-sicon[data-tool]").forEach((el) => { dock[el.dataset.tool] = el; });

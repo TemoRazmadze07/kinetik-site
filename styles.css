@@ -1911,6 +1911,46 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   animation: shimmer 7s ease-in-out infinite;
 }
 
+
+/* --- hero kicker (replaces the removed availability badge) --- */
+.khero-kicker {
+  font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--mute); margin-bottom: clamp(46px, 6vh, 58px);
+}
+
+/* --- handwritten hello: the portfolio's signature, over the wordmark.
+       Reuses the portfolio's stroke-mask recipe (see .hero2-hello) with
+       timings that wait for the wordmark sweep (.95s at 1.05s) to land. --- */
+.khero-hello {
+  position: absolute; z-index: 2;
+  top: clamp(-46px, -3.2vw, -34px); right: 3%;
+  width: clamp(88px, 10vw, 118px); height: auto; overflow: visible;
+  transform: rotate(-5deg);
+}
+.khero-hello .hh-text {
+  font-family: "Dancing Script", cursive; font-weight: 700; font-size: 46px;
+  fill: var(--ink);
+}
+.khero-hello .hh-mask {
+  fill: none; stroke: #fff; stroke-width: 10;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1; /* pathLength="1" on the path */
+  animation: h2draw 1.6s cubic-bezier(.4, .05, .55, .95) 2.1s forwards;
+}
+.khero-hello .hh-dot { opacity: 0; animation: h2fade .15s ease-out 3.8s forwards; }
+
+/* --- trust strip founder line --- */
+.trust .trust-label { text-align: center; margin-bottom: 4px; }
+.trust-sub { text-align: center; color: var(--body); font-size: 15px; max-width: 660px; margin: 0 auto 8px; padding: 0 24px; }
+
+/* --- accessibility band --- */
+.a11y { background: var(--band); padding: 88px 0; }
+.a11y-link { margin-top: 20px; }
+.a11y-link a { color: var(--accent); font-weight: 700; font-size: 16.5px; text-decoration: none; }
+.a11y-link a:hover { text-decoration: underline; }
+.a11y-link .btn-arrow { display: inline-block; transition: transform .25s ease; }
+.a11y-link a:hover .btn-arrow { transform: translateX(4px); }
+
 /* --- footer founder credit --- */
 .footer-founder { color: var(--accent-ink); text-decoration: none; }
 .footer-founder:hover { text-decoration: underline; }
@@ -1921,5 +1961,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   .khero-bars i { animation: none; transform: none; opacity: 1; }
   .khero-marquee { opacity: 1; animation: none; }
   .khero-mq-track { animation: none; }
+  .khero-hello .hh-mask { animation: none; stroke-dashoffset: 0; }
+  .khero-hello .hh-dot { animation: none; opacity: 1; }
   .khero-title .accent { animation: none; }
 }
