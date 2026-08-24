@@ -1789,23 +1789,12 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .nav-links .btn { box-shadow: none; }
 
 /* --- hero --- */
-.khero { position: relative; overflow: hidden; padding: clamp(44px, 8vh, 88px) 0 0; }
+.khero { position: relative; overflow: hidden; padding: clamp(64px, 11vh, 128px) 0 clamp(56px, 9vh, 104px); }
 .khero-inner { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.khero-badge {
-  display: inline-flex; align-items: center; gap: 9px;
-  font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
-  color: var(--mute); border: 1px solid var(--line); border-radius: var(--r-pill);
-  padding: 9px 16px; margin-bottom: clamp(30px, 5.5vh, 52px);
-}
-.khero-pulse {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
-  box-shadow: 0 0 0 0 rgba(54,245,162,.55); animation: kpulse 2.2s ease-out infinite;
-}
-@keyframes kpulse {
-  70% { box-shadow: 0 0 0 10px rgba(54,245,162,0); }
-  100% { box-shadow: 0 0 0 0 rgba(54,245,162,0); }
-}
-.khero-mark { display: flex; align-items: stretch; gap: clamp(14px, 2.4vw, 28px); width: min(860px, 86%); }
+.khero-mark { position: relative; display: flex; align-items: stretch; gap: clamp(14px, 2.4vw, 28px); width: min(860px, 86%); }
+/* the ghost band is absolutely positioned, so the mark's own parts need an
+   explicit layer or they would paint underneath it */
+.khero-bars, .khero-wordmark { position: relative; z-index: 1; }
 .khero-wordmark {
   display: block; width: 100%; height: auto; min-width: 0;
   /* negative insets: the sweep must never clip the glyphs' AA edge */
@@ -1829,19 +1818,25 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .khero .hero-cta { margin-top: 32px; }
 
 /* --- hero services marquee (giant ghost type, same trick as the old hero) --- */
-.khero-marquee { position: relative; margin-top: clamp(40px, 7vh, 76px); overflow: hidden; }
+.khero-marquee {
+  position: absolute; top: 50%; left: 50%; z-index: 0;
+  width: 100vw; transform: translate(-50%, -50%);
+  overflow: hidden; pointer-events: none;
+  opacity: 0; animation: h2fade .9s ease 1.15s forwards;
+}
 .khero-marquee::before, .khero-marquee::after {
-  content: ""; position: absolute; top: 0; bottom: 0; width: min(200px, 18vw); z-index: 2; pointer-events: none;
+  content: ""; position: absolute; top: 0; bottom: 0; width: min(230px, 20vw); z-index: 2; pointer-events: none;
 }
 .khero-marquee::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
 .khero-marquee::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
-.khero-mq-track { display: flex; width: max-content; animation: h2scroll 130s linear infinite; }
+.khero-mq-track { display: flex; width: max-content; animation: h2scroll 150s linear infinite; }
 .khero-mq-track ul { display: flex; list-style: none; margin: 0; padding: 0; }
 .khero-mq-track li {
   white-space: nowrap; padding-left: .38em;
-  font-size: clamp(54px, 9vw, 104px); font-weight: 600; line-height: 1.35;
+  /* portfolio hero metrics; 1.35 keeps descenders clear of overflow:hidden */
+  font-size: clamp(64px, 12.5vw, 136px); font-weight: 500; line-height: 1.35;
   letter-spacing: -0.045em;
-  color: color-mix(in srgb, var(--ink) 6.5%, transparent);
+  color: color-mix(in srgb, var(--ink) 6%, transparent);
 }
 
 /* --- services --- */
@@ -1924,7 +1919,7 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 @media (prefers-reduced-motion: reduce) {
   .khero-wordmark { animation: none; clip-path: none; }
   .khero-bars i { animation: none; transform: none; opacity: 1; }
-  .khero-pulse { animation: none; }
+  .khero-marquee { opacity: 1; animation: none; }
   .khero-mq-track { animation: none; }
   .khero-title .accent { animation: none; }
 }
