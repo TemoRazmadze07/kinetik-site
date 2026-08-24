@@ -109,13 +109,13 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 /* ---------- buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 10px;
-  background: var(--accent); color: #1c1109 !important;
+  background: var(--ink); color: var(--bg) !important;
   font-weight: 700; font-size: 16px; text-decoration: none;
   padding: 15px 28px; border-radius: var(--r-pill);
   transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
   box-shadow: 0 1px 2px rgba(14,27,44,.12);
 }
-.btn:hover { background: #ff8155; transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(255,106,61,.4); }
+.btn:hover { background: #ffffff; transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(255,255,255,.22); }
 .btn .btn-arrow { transition: transform .25s ease; }
 .btn:hover .btn-arrow { transform: translateX(4px); }
 .btn-ghost { background: transparent; color: var(--ink) !important; border: 1.5px solid var(--ink); box-shadow: none; }
