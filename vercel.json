@@ -1,0 +1,31 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "//": [
+    "Static site, no build step. English is the default document at / ; Georgian",
+    "is a plain subdirectory at /ka/ . Nothing here negotiates language: Vercel",
+    "does no Accept-Language redirect for static output, so every visitor lands",
+    "on English and reaches Georgian only via the nav switch. Keep it that way.",
+    "",
+    "trailingSlash matches the canonical urls exactly (/ and /ka/), so /ka gets a",
+    "308 to /ka/ instead of becoming a second url for the same document.",
+    "cleanUrls does the same job for /index.html -> / .",
+    "",
+    "The only cache override is the Georgian font: its filename carries the face",
+    "version (v48), so a year of immutable caching can never serve a stale file.",
+    "Everything else keeps Vercel's revalidate-by-default, which is what the",
+    "?v= query strings on styles.css / script.js already rely on."
+  ],
+
+  "trailingSlash": true,
+  "cleanUrls": true,
+
+  "headers": [
+    {
+      "source": "/assets/fonts/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}
