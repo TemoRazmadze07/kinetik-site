@@ -491,7 +491,7 @@ const I18N = (() => {
       v("message") === "—" ? "" : v("message"),
     ].join("\n");
     window.location.href =
-      "mailto:temorazmadze01@gmail.com?subject=" + encodeURIComponent(subject) +
+      "mailto:contact@kinetik.ge?subject=" + encodeURIComponent(subject) +
       "&body=" + encodeURIComponent(body);
   });
 })();
