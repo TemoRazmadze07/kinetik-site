@@ -1,3 +1,43 @@
+/* --- strings this script writes into the DOM -------------------------------
+ * The Georgian page is a separate document (ka/index.html) sharing this file,
+ * so the copy JS creates at runtime has to follow the document's language.
+ * Everything else on the site is translated in the HTML itself, which is where
+ * translated copy belongs — this map is deliberately the exception, not a
+ * general i18n layer. An unknown lang falls back to English rather than
+ * rendering a key.
+ *
+ * `briefs` are the illustrative console entries: [brief, answer, tool label].
+ * They stay ILLUSTRATIVE in both languages — generic problems the studio is
+ * built for, never a claim about a named client.
+ */
+const I18N = (() => {
+  const S = {
+    en: {
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
+      required: "This field is required.",
+      mailSubject: "New project — ",
+      mailName: "Name: ",
+      mailBusiness: "Business: ",
+      mailNeed: "Need: ",
+      mailReach: "Reach me at: ",
+      briefs: [["a claims portal that agents fight with every day", "→ Product & UX: research, rebuilt flows, prototype.", "Product & UX"], ["a public site that fails its WCAG audit", "→ Accessibility: audit, fixes, AA from the wireframe.", "Accessibility"], ["three products, three different button styles", "→ Design system: one foundation, every team aligned.", "Design system"], ["an idea that needs to become a working product", "→ Design + build: from concept to launch.", "Design + build"]]
+    },
+    ka: {
+      openMenu: "მენიუს გახსნა",
+      closeMenu: "მენიუს დახურვა",
+      required: "ეს ველი სავალდებულოა.",
+      mailSubject: "ახალი პროექტი — ",
+      mailName: "სახელი: ",
+      mailBusiness: "ბიზნესი: ",
+      mailNeed: "საჭიროება: ",
+      mailReach: "კონტაქტი: ",
+      briefs: [["განაცხადების პორტალი, რომელსაც აგენტები ყოველდღე ებრძვიან", "→ პროდუქტი და UX: კვლევა, თავიდან აწყობილი სცენარები, პროტოტიპი.", "პროდუქტი და UX"], ["საჯარო ვებსაიტი, რომელიც WCAG აუდიტს ვერ გადის", "→ ხელმისაწვდომობა: აუდიტი, გასწორებები, AA ვაირფრეიმიდან.", "ხელმისაწვდომობა"], ["სამი პროდუქტი, ღილაკის სამი სხვადასხვა სტილი", "→ დიზაინ სისტემა: ერთი საფუძველი, ყველა გუნდი ერთ რიტმში.", "დიზაინ სისტემა"], ["იდეა, რომელიც მომუშავე პროდუქტად უნდა იქცეს", "→ დიზაინი + აწყობა: კონცეფციიდან გაშვებამდე.", "დიზაინი + აწყობა"]]
+    },
+  };
+  return S[(document.documentElement.lang || "en").slice(0, 2)] || S.en;
+})();
+
 // Scroll-reveal with hard guarantees: content can never stay hidden.
 // - Elements already in the viewport are revealed immediately on load.
 // - IntersectionObserver animates the rest in as you scroll.
@@ -241,7 +281,7 @@
   const setOpen = (open) => {
     nav.classList.toggle("nav-open", open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    toggle.setAttribute("aria-label", open ? I18N.closeMenu : I18N.openMenu);
   };
 
   toggle.addEventListener("click", () => setOpen(!nav.classList.contains("nav-open")));
@@ -287,15 +327,13 @@
   if (!typed || !out) return;
   // Illustrative briefs → the package that answers each. Deliberately generic:
   // these are the kinds of businesses KINETIK is built for, not client claims.
+  // The three copy strings per brief come from I18N at the top of this file;
+  // the tool keys that light the dock are language-independent, so they stay here.
   const PAIRS = [
-    ["a claims portal that agents fight with every day",
-     "→ Product & UX: research, rebuilt flows, prototype.", "Product & UX", ["figma", "claude"]],
-    ["a public site that fails its WCAG audit",
-     "→ Accessibility: audit, fixes, AA from the wireframe.", "Accessibility", ["claude", "gpt"]],
-    ["three products, three different button styles",
-     "→ Design system: one foundation, every team aligned.", "Design system", ["figma", "claude", "gemini"]],
-    ["an idea that needs to become a working product",
-     "→ Design + build: from concept to launch.", "Design + build", ["figma", "claude", "lovable"]]
+    [...I18N.briefs[0], ["figma", "claude"]],
+    [...I18N.briefs[1], ["claude", "gpt"]],
+    [...I18N.briefs[2], ["figma", "claude", "gemini"]],
+    [...I18N.briefs[3], ["figma", "claude", "lovable"]],
   ];
   const dock = {};
   document.querySelectorAll("#process .ai-sicon[data-tool]").forEach((el) => { dock[el.dataset.tool] = el; });
@@ -431,7 +469,7 @@
     if (bad.length) {
       let firstField = null;
       bad.forEach((el) => {
-        const field = showError(el, el.dataset.error || "This field is required.");
+        const field = showError(el, el.dataset.error || I18N.required);
         if (!firstField) firstField = field;
       });
       // Focus first (preventScroll, or the browser's own jump fights the smooth
@@ -443,12 +481,12 @@
     }
 
     const v = (n) => (form.elements[n] && form.elements[n].value.trim()) || "—";
-    const subject = "New project — " + (v("business") !== "—" ? v("business") : v("name"));
+    const subject = I18N.mailSubject + (v("business") !== "—" ? v("business") : v("name"));
     const body = [
-      "Name: " + v("name"),
-      "Business: " + v("business"),
-      "Need: " + v("need"),
-      "Reach me at: " + v("reach"),
+      I18N.mailName + v("name"),
+      I18N.mailBusiness + v("business"),
+      I18N.mailNeed + v("need"),
+      I18N.mailReach + v("reach"),
       "",
       v("message") === "—" ? "" : v("message"),
     ].join("\n");

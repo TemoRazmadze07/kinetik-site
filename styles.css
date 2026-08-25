@@ -1455,6 +1455,37 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 }
 
 
+/* ---------- language switch ----------
+   One link, not a two-state toggle: it always names the language you can switch
+   TO, which is all the nav budget allows once the Georgian labels are in. The
+   element carries its own lang= so a screen reader pronounces "ქარ" as Georgian
+   instead of mangling it as English, and hreflang so crawlers pair the two
+   documents. No ::after underline — it is a control, not a section link. */
+.nav-links a.nav-lang {
+  font-size: 13px; font-weight: 700; letter-spacing: .04em;
+  color: var(--mute);
+  border: 1px solid var(--line); border-radius: var(--r-pill);
+  padding: 6px 11px;
+  transition: color .2s ease, border-color .2s ease;
+}
+.nav-links a.nav-lang:hover { color: var(--ink); border-color: var(--accent); }
+.nav-links a.nav-lang::after { display: none; }
+@media (max-width: 760px) {
+  /* the mobile sheet turns every link into a full-width row with a rule under
+     it; the switch opts out and stays a pill so it reads as a control */
+  .nav-links a.nav-lang {
+    align-self: flex-start; margin-top: 14px; padding: 7px 13px;
+    font-size: 13.5px; border-bottom: 1px solid var(--line);
+  }
+}
+
+/* Georgian nav labels are 25-35% wider than the English ones and the row has to
+   survive to the same 760px collapse, so it buys the space back from the gap
+   and half a point of size rather than from a different breakpoint (which would
+   also have to be mirrored in the matchMedia string in script.js). */
+:lang(ka) .nav-links { gap: 20px; }
+:lang(ka) .nav-links a:not(.btn):not(.nav-lang) { font-size: 14.5px; }
+
 /* ---------- Georgian (KA) ----------
    Decided 2026-08-25 after a rendered round against FiraGO: Noto Sans Georgian.
    Measured at 100px, its Mkhedruli body height is 53.6 against Plus Jakarta's
@@ -1484,6 +1515,23 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 :lang(ka) .khero-mq-track li {
   font-size: clamp(58px, 11vw, 124px); line-height: 1.5; letter-spacing: 0;
 }
+
+/* The console is the one place with its own font stack, and it has no Georgian
+   in it — so on the KA page every Georgian glyph fell through to whatever the OS
+   happens to pick for monospace, which differs per platform. Naming the face
+   after the mono fonts (not before) keeps Latin monospaced and makes the Georgian
+   deterministic. It is not monospaced, but no Georgian mono face exists to be. */
+:lang(ka) .ai-console {
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+               "Noto Sans Georgian", monospace;
+}
+
+/* Mobile hero. The Georgian H1 runs 51 characters against the English 34, and at
+   the shared 26px floor it broke to FIVE lines at 375px — 156px of headline that
+   shoved the CTAs a further 70px down the page. 24px clears the wrap cliff and
+   lands it on three. Only the floor moves: above ~667px the 3.6vw term is already
+   larger, so desktop is untouched. */
+:lang(ka) .khero-title { font-size: clamp(24px, 3.6vw, 42px); }
 
 /* No uppercase. Georgian is unicameral, and Chromium does not apply the
    Mkhedruli -> Mtavruli case map anyway (measured: the transformed string
