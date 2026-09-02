@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Vercel's analytics + speed-insights endpoints. Nothing to index, and a crawler
+# that follows them just burns budget on 0-byte beacons.
+Disallow: /_vercel/
+
+Sitemap: https://www.kinetik.ge/sitemap.xml

@@ -23,6 +23,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kinetik.ge/assets/og-image.png">
 <meta name="theme-color" content="#0d0f14">
+<meta property="og:url" content="https://www.kinetik.ge/">
 <meta property="og:locale" content="en_GB">
 <meta property="og:locale:alternate" content="ka_GE">
 
@@ -34,6 +35,82 @@
 <link rel="alternate" hreflang="en" href="https://www.kinetik.ge/">
 <link rel="alternate" hreflang="ka" href="https://www.kinetik.ge/ka/">
 <link rel="alternate" hreflang="x-default" href="https://www.kinetik.ge/">
+
+<!-- Structured data. Deliberately an Organization, NOT a LocalBusiness: that type
+     is built around a street address and opening hours, and inventing either to
+     win a rich result is exactly the kind of thing Google strips trust for. The
+     day there is a real registered address, this becomes a LocalBusiness and the
+     studio becomes eligible for the local pack.
+     No founder node and no sameAs: the founder's name is deliberately absent from
+     this site, and the social handles are not claimed yet. Add sameAs when they
+     resolve — an unclaimed profile URL is worse than none. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.kinetik.ge/#organization",
+      "name": "KINETIK",
+      "url": "https://www.kinetik.ge/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.kinetik.ge/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": "https://www.kinetik.ge/assets/og-image.png",
+      "email": "contact@kinetik.ge",
+      "description": "KINETIK is a digital product studio. We design and build websites, platforms and digital services that are clear, accessible and built to perform.",
+      "knowsLanguage": [
+        { "@type": "Language", "name": "Georgian", "alternateName": "ka" },
+        { "@type": "Language", "name": "English", "alternateName": "en" }
+      ],
+      "areaServed": [
+        { "@type": "Country", "name": "Georgia" },
+        { "@type": "Country", "name": "Poland" }
+      ],
+      "knowsAbout": [
+        "Product design",
+        "UX/UI design",
+        "Web development",
+        "Web accessibility",
+        "WCAG 2.2 audits",
+        "Design systems",
+        "E-commerce"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Product & UX design", "description": "Research, user journeys, complex workflows, prototyping and interfaces designed around real user needs." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Websites & platforms", "description": "High-performing websites, portals and digital platforms — from concept through launch." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Accessibility", "description": "WCAG audits and accessible design that makes digital products work for more people." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Design systems", "description": "Scalable foundations that keep products consistent as teams and features grow." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Development", "description": "Production-ready implementation with trusted technical specialists." } }
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.kinetik.ge/#website",
+      "url": "https://www.kinetik.ge/",
+      "name": "KINETIK",
+      "publisher": { "@id": "https://www.kinetik.ge/#organization" },
+      "inLanguage": ["en", "ka"]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.kinetik.ge/#webpage",
+      "url": "https://www.kinetik.ge/",
+      "name": "KINETIK — Digital Product Studio",
+      "isPartOf": { "@id": "https://www.kinetik.ge/#website" },
+      "about": { "@id": "https://www.kinetik.ge/#organization" },
+      "inLanguage": "en"
+    }
+  ]
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

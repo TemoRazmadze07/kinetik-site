@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Two URLs, one per language. Each entry declares the full alternate set
+     INCLUDING itself, which is what the protocol requires — a page that omits
+     its own xhtml:link is a common reason Google ignores the whole cluster. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.kinetik.ge/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.kinetik.ge/"/>
+    <xhtml:link rel="alternate" hreflang="ka" href="https://www.kinetik.ge/ka/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.kinetik.ge/"/>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.kinetik.ge/ka/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.kinetik.ge/"/>
+    <xhtml:link rel="alternate" hreflang="ka" href="https://www.kinetik.ge/ka/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.kinetik.ge/"/>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

@@ -3,8 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KINETIK &mdash; ვებსაიტებისა და ციფრული პროდუქტების სტუდია</title>
-<meta name="description" content="KINETIK &mdash; ვებსაიტებისა და ციფრული პროდუქტების სტუდია. ვქმნით ვებსაიტებს, პლატფორმებსა და ციფრულ სერვისებს მკაფიო UX/UI დიზაინითა და რეალური ბიზნეს შედეგით.">
+<!-- SEO1/SEO2, keyword pass 2026-09-02. The commercial query in Georgian is
+     "ვებგვერდის დამზადება" — the old title led with "ვებსაიტებისა და ციფრული
+     პროდუქტების სტუდია", which is how the studio describes itself and not how
+     anyone searches. Keyword leads, positioning follows, brand closes. -->
+<title>ვებგვერდის დამზადება და ციფრული პროდუქტების სტუდია &mdash; KINETIK</title>
+<meta name="description" content="ვებგვერდის დამზადება, საიტის დიზაინი და ციფრული პროდუქტების შექმნა საქართველოსა და პოლონეთში. ვქმნით ვებგვერდებს, პლატფორმებსა და ციფრულ სერვისებს მკაფიო UX/UI დიზაინითა და რეალური ბიზნეს შედეგით.">
 
 <!-- Open Graph / social share preview.
      The base is the real domain now. It appears 6x in this head and 6x in the
@@ -23,6 +27,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kinetik.ge/assets/og-image.png">
 <meta name="theme-color" content="#0d0f14">
+<meta property="og:url" content="https://www.kinetik.ge/ka/">
 <meta property="og:locale" content="ka_GE">
 <meta property="og:locale:alternate" content="en_GB">
 
@@ -34,6 +39,80 @@
 <link rel="alternate" hreflang="en" href="https://www.kinetik.ge/">
 <link rel="alternate" hreflang="ka" href="https://www.kinetik.ge/ka/">
 <link rel="alternate" hreflang="x-default" href="https://www.kinetik.ge/">
+
+<!-- Structured data — same organization node as the English page, same @id, so the
+     two documents describe ONE entity rather than two competing ones. Only the
+     WebPage node differs. See index.html for why this is Organization and not
+     LocalBusiness. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.kinetik.ge/#organization",
+      "name": "KINETIK",
+      "alternateName": "კინეტიკი",
+      "url": "https://www.kinetik.ge/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.kinetik.ge/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": "https://www.kinetik.ge/assets/og-image.png",
+      "email": "contact@kinetik.ge",
+      "description": "KINETIK — ვებსაიტებისა და ციფრული პროდუქტების სტუდია. ვქმნით ვებგვერდებს, პლატფორმებსა და ციფრულ სერვისებს მკაფიო UX/UI დიზაინითა და რეალური ბიზნეს შედეგით.",
+      "knowsLanguage": [
+        { "@type": "Language", "name": "Georgian", "alternateName": "ka" },
+        { "@type": "Language", "name": "English", "alternateName": "en" }
+      ],
+      "areaServed": [
+        { "@type": "Country", "name": "Georgia" },
+        { "@type": "Country", "name": "Poland" }
+      ],
+      "knowsAbout": [
+        "ვებგვერდის დამზადება",
+        "საიტის დამზადება",
+        "ვებ დიზაინი",
+        "UX/UI დიზაინი",
+        "ციფრული პროდუქტის დიზაინი",
+        "ხელმისაწვდომობა (WCAG)",
+        "დიზაინ სისტემები",
+        "ელკომერცია"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "სერვისები",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "პროდუქტი და UX დიზაინი", "description": "კვლევა, მომხმარებლის გზები, რთული სამუშაო პროცესები, პროტოტიპები და რეალურ საჭიროებებზე მორგებული ინტერფეისები." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "ვებგვერდის დამზადება და პლატფორმები", "description": "სწრაფი და შედეგიანი ვებგვერდები, პორტალები და ციფრული პლატფორმები — იდეიდან გაშვებამდე." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "ხელმისაწვდომობა", "description": "WCAG-ის აუდიტი და ინკლუზიური დიზაინი, რომლითაც ციფრული პროდუქტი ყველა მომხმარებლისთვის მოსახერხებელი ხდება." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "დიზაინ სისტემები", "description": "მასშტაბირებადი საფუძველი, რომელიც პროდუქტს ერთგვაროვნად ინარჩუნებს გუნდისა და ფუნქციების ზრდისას." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "დეველოპმენტი", "description": "გაშვებისთვის მზა, გამართული პროდაქშენ-კოდი სანდო საპარტნიორო დეველოპერებთან ერთად." } }
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.kinetik.ge/#website",
+      "url": "https://www.kinetik.ge/",
+      "name": "KINETIK",
+      "publisher": { "@id": "https://www.kinetik.ge/#organization" },
+      "inLanguage": ["en", "ka"]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.kinetik.ge/ka/#webpage",
+      "url": "https://www.kinetik.ge/ka/",
+      "name": "KINETIK — ვებსაიტებისა და ციფრული პროდუქტების სტუდია",
+      "isPartOf": { "@id": "https://www.kinetik.ge/#website" },
+      "about": { "@id": "https://www.kinetik.ge/#organization" },
+      "inLanguage": "ka"
+    }
+  ]
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -865,7 +944,7 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
         <p class="footer-h">სერვისები</p>
         <ul>
           <li><a href="#services">პროდუქტისა და UX დიზაინი</a></li>
-          <li><a href="#services">ვებსაიტები და პლატფორმები</a></li>
+          <li><a href="#services">ვებგვერდის დამზადება და პლატფორმები</a></li>
           <li><a href="#services">WCAG აუდიტი</a></li>
           <li><a href="#services">დიზაინ სისტემები</a></li>
           <li><a href="#services">დეველოპმენტი</a></li>
