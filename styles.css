@@ -1480,6 +1480,66 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
 .a11y-link .btn-arrow { display: inline-block; transition: transform .25s ease; }
 .a11y-link a:hover .btn-arrow { transform: translateX(4px); }
 
+/* --- /ka/khelmisatsvdomoba/ — the accessibility-law landing page --------------
+   A prose page, not a section of the one-pager, so it sets its own measure.
+   Everything reuses the existing tokens and primitives (kicker, btn, reveal);
+   these rules only add the long-form layout the home page never needed. */
+.a11y-hero {
+  padding: clamp(96px, 14vh, 150px) 0 clamp(40px, 6vh, 64px);
+  background: linear-gradient(to bottom, var(--band), var(--bg) 82%);
+}
+.a11y-h1 {
+  font-size: clamp(30px, 4.6vw, 52px); line-height: 1.09; letter-spacing: -0.03em;
+  color: var(--ink); margin: 16px 0 0; max-width: 20ch; text-wrap: balance;
+}
+.a11y-lede { max-width: 62ch; margin-top: 22px; font-size: clamp(17px, 2vw, 19px); line-height: 1.6; }
+.a11y-cta { margin-top: 34px; }
+
+.a11y-body { padding: 0 0 96px; }
+.a11y-body h2 {
+  font-size: clamp(24px, 3vw, 32px); line-height: 1.2; letter-spacing: -0.02em;
+  color: var(--ink); margin: 56px 0 16px; max-width: 24ch; text-wrap: balance;
+}
+.a11y-body h3 {
+  font-size: 19px; line-height: 1.35; color: var(--ink);
+  margin: 34px 0 10px; max-width: 34ch; text-wrap: balance;
+}
+.a11y-body p { max-width: 66ch; margin-bottom: 16px; line-height: 1.68; }
+.a11y-body strong { color: var(--ink); font-weight: 700; }
+/* sup is the article number (36¹) — keep it from opening the line height */
+.a11y-body sup, .a11y-h1 sup, .a11y-lede sup { line-height: 0; font-size: .72em; }
+
+.a11y-list { list-style: none; max-width: 62ch; margin: 0 0 16px; display: grid; gap: 10px; }
+.a11y-list li { position: relative; padding-left: 26px; line-height: 1.55; }
+.a11y-list li::before {
+  content: ""; position: absolute; left: 0; top: .62em;
+  width: 8px; height: 8px; border-radius: 2px; background: var(--accent);
+}
+
+.a11y-steps { list-style: none; counter-reset: a11ystep; max-width: 66ch; margin: 0 0 16px; display: grid; gap: 16px; }
+.a11y-steps li {
+  counter-increment: a11ystep; position: relative; padding-left: 46px; line-height: 1.62;
+}
+.a11y-steps li::before {
+  content: counter(a11ystep); position: absolute; left: 0; top: 0;
+  width: 30px; height: 30px; display: grid; place-items: center;
+  border-radius: var(--r-md); corner-shape: squircle;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent); font-size: 13.5px; font-weight: 800;
+}
+.a11y-steps b { color: var(--ink); font-weight: 700; }
+
+.a11y-source {
+  margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--line);
+  font-size: 14.5px; line-height: 1.6; color: var(--mute); max-width: 66ch;
+}
+.a11y-source a { color: var(--accent-ink); }
+
+@media (max-width: 640px) {
+  .a11y-body { padding-bottom: 72px; }
+  .a11y-body h2 { margin-top: 44px; }
+}
+
 /* --- motion off switch for the new pieces --- */
 @media (max-width: 560px) {
   .khero-mac { width: 180px; }

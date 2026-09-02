@@ -20,4 +20,11 @@
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
+  <!-- Georgian-only: it documents Georgian law, so it has no English alternate
+       and deliberately carries no xhtml:link cluster. -->
+  <url>
+    <loc>https://www.kinetik.ge/ka/khelmisatsvdomoba/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
