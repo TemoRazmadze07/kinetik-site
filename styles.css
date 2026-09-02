@@ -1294,6 +1294,44 @@ h1, h2, h3 { color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
   border-color: var(--err); box-shadow: 0 0 0 3px rgba(255,138,138,.2);
 }
 
+/* --- send confirmation snackbar (script.js creates it on submit) -------------
+   Fixed to the bottom rather than inline under the button: the form runs most of
+   a phone screen, and after a send the visitor can be anywhere in it — an inline
+   message would confirm the send somewhere they are not looking. Sits above the
+   mobile menu overlay (z 300). Icon + colour, never colour alone, same rule as
+   .cfield-error. */
+.ksnack {
+  position: fixed; z-index: 400;
+  left: 50%; bottom: 24px; transform: translate(-50%, 12px);
+  display: flex; align-items: flex-start; gap: 10px;
+  width: min(560px, calc(100vw - 32px));
+  padding: 14px 14px 14px 16px;
+  border: 1px solid var(--line); border-radius: var(--r-md); corner-shape: squircle;
+  background: var(--surface); box-shadow: 0 18px 44px rgba(0,0,0,.55);
+  color: var(--body); font-size: 14.5px; font-weight: 500; line-height: 1.5;
+  opacity: 0; pointer-events: none;
+  transition: opacity .28s ease, transform .28s ease;
+}
+.ksnack[data-open] { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.ksnack[data-state="ok"]  { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.ksnack[data-state="err"] { border-color: color-mix(in srgb, var(--err) 45%, var(--line)); }
+.ksnack-icon { flex: none; display: flex; margin-top: 1px; }
+.ksnack-icon svg { width: 17px; height: 17px; }
+.ksnack[data-state="ok"]  .ksnack-icon { color: var(--accent); }
+.ksnack[data-state="err"] .ksnack-icon { color: var(--err); }
+.ksnack-x {
+  flex: none; margin: -4px -4px 0 auto; width: 28px; height: 28px; padding: 0;
+  display: grid; place-items: center;
+  border: 0; border-radius: 8px; background: none;
+  color: var(--mute); font-size: 19px; line-height: 1; cursor: pointer;
+}
+.ksnack-x:hover { color: var(--ink); background: rgba(255,255,255,.06); }
+.ksnack-x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .ksnack { bottom: 16px; } }
+@media (prefers-reduced-motion: reduce) {
+  .ksnack { transform: translate(-50%, 0); transition: opacity .01s; }
+}
+
 /* --- custom select (script.js builds it; the native one below is the fallback) ---
    The chevron here is a CSS-drawn ::after, not the data URI the native control
    needs — a <select> is a replaced element and can't carry a pseudo-element. The

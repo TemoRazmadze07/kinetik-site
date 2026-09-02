@@ -21,6 +21,10 @@ const I18N = (() => {
       mailBusiness: "Business: ",
       mailNeed: "Need: ",
       mailReach: "Reach me at: ",
+      sending: "Sending…",
+      sendOk: "Thank you — your brief is with us. We'll get back to you as soon as possible.",
+      sendFail: "That didn't send. Please write to us directly at contact@kinetik.ge.",
+      dismiss: "Dismiss",
       briefs: [["a claims portal that agents fight with every day", "→ Product & UX: research, rebuilt flows, prototype.", "Product & UX"], ["a public site that fails its WCAG audit", "→ Accessibility: audit, fixes, AA from the wireframe.", "Accessibility"], ["three products, three different button styles", "→ Design system: one foundation, every team aligned.", "Design system"], ["an idea that needs to become a working product", "→ Design + build: from concept to launch.", "Design + build"]]
     },
     ka: {
@@ -32,6 +36,10 @@ const I18N = (() => {
       mailBusiness: "ბიზნესი: ",
       mailNeed: "საჭიროება: ",
       mailReach: "კონტაქტი: ",
+      sending: "იგზავნება…",
+      sendOk: "მადლობა — თქვენი შეტყობინება მივიღეთ. დაგიკავშირდებით უმოკლეს ვადაში.",
+      sendFail: "გაგზავნა ვერ მოხერხდა. მოგვწერეთ პირდაპირ: contact@kinetik.ge",
+      dismiss: "დახურვა",
       briefs: [["განაცხადების პორტალი, რომელსაც აგენტები ყოველდღე ებრძვიან", "→ პროდუქტი და UX: კვლევა, თავიდან აწყობილი სცენარები, პროტოტიპი.", "პროდუქტი და UX"], ["საჯარო ვებსაიტი, რომელიც WCAG აუდიტს ვერ გადის", "→ ხელმისაწვდომობა: აუდიტი, გასწორებები, AA ვაირფრეიმიდან.", "ხელმისაწვდომობა"], ["სამი პროდუქტი, ღილაკის სამი სხვადასხვა სტილი", "→ დიზაინ სისტემა: ერთი საფუძველი, ყველა გუნდი ერთ რიტმში.", "დიზაინ სისტემა"], ["იდეა, რომელიც მომუშავე პროდუქტად უნდა იქცეს", "→ დიზაინი + აწყობა: კონცეფციიდან გაშვებამდე.", "დიზაინი + აწყობა"]]
     },
   };
@@ -386,9 +394,14 @@ const I18N = (() => {
 
 
 // --- start-project form ------------------------------------------------------
-// Static site, no backend yet: the submit composes a mailto so the visitor's
-// own mail app carries the brief. Swap for a real endpoint (Formspree /
-// serverless) when one exists.
+// The brief posts straight to a form endpoint and the visitor gets a snackbar,
+// so nothing depends on them having a mail client configured — on a phone with
+// only webmail, the old mailto opened an empty app or nothing at all, and the
+// brief was silently lost.
+//
+// ENDPOINT empty === no backend configured, and the submit falls back to the
+// original mailto. That keeps this file safe to ship before the endpoint exists
+// and keeps the form working if the service is ever retired.
 //
 // Validation is ours, not the browser's. The native bubble ("Please fill out this
 // field") is a tooltip the page can't style, position or keep on screen: it points
@@ -405,6 +418,9 @@ const I18N = (() => {
   const form = document.getElementById("startForm");
   if (!form) return;
   form.setAttribute("novalidate", "");
+
+  // Left empty, the submit still works — it just falls back to mailto.
+  const ENDPOINT = "https://formspree.io/f/xaeyozqk";
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   // Icon + colour, never colour alone — the accent of this brand is green and
@@ -461,6 +477,49 @@ const I18N = (() => {
     if (e.target.value && e.target.value.trim()) clearError(e.target);
   });
 
+  const OK_ICON =
+    '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+    '<circle cx="8" cy="8" r="6.6"/><path d="M5.2 8.3l1.9 1.9 3.7-4"/></svg>';
+
+  // One node, created once and kept: a live region has to be in the DOM BEFORE its
+  // text changes or screen readers miss the announcement, so this can never be
+  // built and filled in the same breath. role stays "status" (polite) for both
+  // outcomes — the visitor just pressed Send and is waiting on the answer, so
+  // nothing here is an interruption, and a role that mutates between calls is the
+  // one thing AT reliably fails to re-register.
+  let snackTimer;
+  const snack = (text, ok) => {
+    clearTimeout(snackTimer);
+    let bar = document.querySelector(".ksnack");
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.className = "ksnack";
+      bar.setAttribute("role", "status");
+      document.body.appendChild(bar);
+    }
+    bar.dataset.state = ok ? "ok" : "err";
+    bar.textContent = "";
+
+    const icon = document.createElement("span");
+    icon.className = "ksnack-icon";
+    icon.innerHTML = ok ? OK_ICON : ICON;
+    const msg = document.createElement("span");
+    msg.textContent = text;
+    const x = document.createElement("button");
+    x.type = "button";
+    x.className = "ksnack-x";
+    x.setAttribute("aria-label", I18N.dismiss);
+    x.textContent = "×";
+    x.addEventListener("click", () => bar.removeAttribute("data-open"));
+    bar.append(icon, msg, x);
+
+    requestAnimationFrame(() => bar.setAttribute("data-open", ""));
+    // Success self-dismisses. A failure carries the address the visitor now has to
+    // act on, so it stays until they close it.
+    if (ok) snackTimer = setTimeout(() => bar.removeAttribute("data-open"), 7000);
+  };
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -490,9 +549,37 @@ const I18N = (() => {
       "",
       v("message") === "—" ? "" : v("message"),
     ].join("\n");
-    window.location.href =
-      "mailto:contact@kinetik.ge?subject=" + encodeURIComponent(subject) +
-      "&body=" + encodeURIComponent(body);
+    if (!ENDPOINT) {
+      window.location.href =
+        "mailto:contact@kinetik.ge?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+      return;
+    }
+
+    const btn = form.querySelector('button[type="submit"]');
+    const label = btn ? btn.innerHTML : "";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = I18N.sending;
+    }
+
+    const data = new FormData(form);
+    // The endpoint decides the notification subject from this field.
+    data.set("_subject", subject);
+
+    fetch(ENDPOINT, { method: "POST", headers: { Accept: "application/json" }, body: data })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.status);
+        form.reset();
+        snack(I18N.sendOk, true);
+      })
+      .catch(() => snack(I18N.sendFail, false))
+      .finally(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = label;
+        }
+      });
   });
 })();
 
@@ -578,6 +665,15 @@ const I18N = (() => {
       Array.from(list.children).forEach((li, n) => li.setAttribute("aria-selected", String(n === i)));
       setActive(i, false);
       sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    // A successful send calls form.reset(), which restores the native select but
+    // leaves this button showing the old choice. The reset event fires BEFORE the
+    // controls are actually reset, hence the frame's delay before reading it back.
+    if (sel.form) {
+      sel.form.addEventListener("reset", () => {
+        requestAnimationFrame(() => commit(sel.selectedIndex));
+      });
     }
 
     function openList() {
